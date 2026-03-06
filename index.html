@@ -1295,30 +1295,103 @@
     document.getElementById('chatFabWrap').style.display = 'flex';
   }
 
-  function inviaMsgDemo() {
-    const input = document.getElementById('cpInput');
-    const testo = input.value.trim();
-    if (!testo) return;
-    const msgs = document.getElementById('chatMessages');
+  // Controllo simulazione usata (cookie)
+  function simulazioneUsata() {
+    return document.cookie.split(';').some(c => c.trim().startsWith('sim_usata=1'));
+  }
+
+  function segnaSimulazioneUsata() {
+    const scadenza = new Date();
+    scadenza.setDate(scadenza.getDate() + 30);
+    document.cookie = 'sim_usata=1; expires=' + scadenza.toUTCString() + '; path=/';
+  }
+
+  function aggiungiBlocco(msgs) {
+    const blocco = document.createElement('div');
+    blocco.style.cssText = 'background:white;border-radius:16px;padding:20px;text-align:center;margin-top:8px;box-shadow:0 4px 16px rgba(0,0,0,0.08);';
+    blocco.innerHTML = '<div style="font-size:1.8rem;margin-bottom:8px;">🔒</div>' +
+      '<div style="font-family:Lora,serif;color:#1a3a5c;font-size:0.95rem;margin-bottom:8px;font-weight:600;">Simulazione gratuita esaurita</div>' +
+      '<div style="color:#777;font-size:0.8rem;line-height:1.5;margin-bottom:16px;">Per altri preventivi e il <strong>servizio completo a 49€</strong> scrivici su WhatsApp.</div>' +
+      '<a href="https://wa.me/393494100204?text=Ciao!%20Ho%20provato%20il%20vostro%20preventivo%20AI%20e%20vorrei%20il%20servizio%20completo." target="_blank" style="display:inline-flex;align-items:center;gap:8px;background:#25D366;color:white;padding:12px 24px;border-radius:50px;text-decoration:none;font-family:Nunito,sans-serif;font-size:0.85rem;font-weight:700;box-shadow:0 4px 14px rgba(37,211,102,0.35);">💬 Scrivici su WhatsApp</a>';
+    msgs.appendChild(blocco);
+    msgs.scrollTop = msgs.scrollHeight;
+    document.getElementById('cpInput').disabled = true;
+    document.getElementById('cpInput').placeholder = 'Simulazione terminata';
+    document.querySelector('.cp-send').disabled = true;
+    document.querySelector('.cp-send').style.opacity = '0.4';
+  }
+
+  function aggiungiMsgUtente(msgs, testo) {
     const userMsg = document.createElement('div');
     userMsg.style.cssText = 'display:flex;flex-direction:row-reverse;gap:8px;align-items:flex-end;';
     userMsg.innerHTML = '<div style="background:linear-gradient(135deg,#1a3a5c,#2d5f8a);border-radius:16px 16px 4px 16px;padding:10px 14px;font-family:Nunito,sans-serif;font-size:0.83rem;color:white;max-width:85%;box-shadow:0 2px 8px rgba(0,0,0,0.07);">' + testo + '</div>';
     msgs.appendChild(userMsg);
-    input.value = '';
     msgs.scrollTop = msgs.scrollHeight;
-    setTimeout(() => {
-      const botMsg = document.createElement('div');
-      botMsg.className = 'cp-msg';
-      botMsg.innerHTML = '<div class="cp-msg-av">✈</div><div class="cp-bubble">Sto cercando le migliori opzioni per te… ✈️<br><br>Per il preventivo completo con volo, hotel e itinerario, scrivimi su <strong>WhatsApp</strong> — rispondo subito!</div>';
-      msgs.appendChild(botMsg);
-      const waBtn = document.createElement('a');
-      waBtn.href = 'https://wa.me/393494100204?text=Ciao!%20Vorrei%20un%20preventivo%20per%20' + encodeURIComponent(testo);
-      waBtn.target = '_blank';
-      waBtn.style.cssText = 'display:inline-flex;align-items:center;gap:8px;background:#25D366;color:white;padding:10px 20px;border-radius:50px;text-decoration:none;font-family:Nunito,sans-serif;font-size:0.82rem;font-weight:700;margin-left:34px;margin-top:4px;box-shadow:0 4px 14px rgba(37,211,102,0.3);';
-      waBtn.innerHTML = '💬 Scrivimi su WhatsApp';
-      msgs.appendChild(waBtn);
-      msgs.scrollTop = msgs.scrollHeight;
-    }, 1200);
+  }
+
+  function aggiungiTyping(msgs) {
+    const typing = document.createElement('div');
+    typing.id = 'typingIndicator';
+    typing.className = 'cp-msg';
+    typing.innerHTML = '<div class="cp-msg-av">✈</div><div class="cp-bubble" style="display:flex;gap:5px;align-items:center;">' +
+      '<span style="width:7px;height:7px;background:#2d5f8a;border-radius:50%;display:inline-block;animation:typingDot 1.2s infinite;opacity:0.4;"></span>' +
+      '<span style="width:7px;height:7px;background:#2d5f8a;border-radius:50%;display:inline-block;animation:typingDot 1.2s infinite 0.2s;opacity:0.4;"></span>' +
+      '<span style="width:7px;height:7px;background:#2d5f8a;border-radius:50%;display:inline-block;animation:typingDot 1.2s infinite 0.4s;opacity:0.4;"></span>' +
+      '</div>';
+    msgs.appendChild(typing);
+    msgs.scrollTop = msgs.scrollHeight;
+    return typing;
+  }
+
+  function aggiungiRispostaBot(msgs, testo) {
+    const botMsg = document.createElement('div');
+    botMsg.className = 'cp-msg';
+    const testoFormattato = testo.replace(/\n/g, '<br>');
+    botMsg.innerHTML = '<div class="cp-msg-av">✈</div><div class="cp-bubble">' + testoFormattato + '</div>';
+    msgs.appendChild(botMsg);
+    msgs.scrollTop = msgs.scrollHeight;
+  }
+
+  async function inviaMsgDemo() {
+    const input = document.getElementById('cpInput');
+    const testo = input.value.trim();
+    if (!testo) return;
+    const msgs = document.getElementById('chatMessages');
+
+    if (simulazioneUsata()) {
+      aggiungiMsgUtente(msgs, testo);
+      input.value = '';
+      aggiungiBlocco(msgs);
+      return;
+    }
+
+    aggiungiMsgUtente(msgs, testo);
+    input.value = '';
+    input.disabled = true;
+    const typing = aggiungiTyping(msgs);
+
+    try {
+      const response = await fetch('/.netlify/functions/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messaggio: testo })
+      });
+      const data = await response.json();
+      typing.remove();
+      if (data.risposta) {
+        aggiungiRispostaBot(msgs, data.risposta);
+        segnaSimulazioneUsata();
+        setTimeout(() => aggiungiBlocco(msgs), 2000);
+      } else {
+        aggiungiRispostaBot(msgs, 'Mi dispiace, si è verificato un errore. Riprova tra poco.');
+      }
+    } catch (error) {
+      typing.remove();
+      aggiungiRispostaBot(msgs, 'Connessione non riuscita. Riprova tra poco.');
+    }
+
+    input.disabled = false;
+    input.focus();
   }
 </script>
 

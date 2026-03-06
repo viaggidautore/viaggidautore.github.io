@@ -1067,5 +1067,250 @@
   });
 </script>
 
+
+<!-- CHAT AI FLOTTANTE -->
+<style>
+  .chat-fab-wrap {
+    position: fixed;
+    bottom: 90px;
+    right: 28px;
+    z-index: 999;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 12px;
+  }
+  .chat-fab-popup {
+    background: white;
+    border-radius: 16px 16px 4px 16px;
+    padding: 14px 18px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+    max-width: 220px;
+    border: 1px solid rgba(200,149,42,0.2);
+    font-family: "Nunito", sans-serif;
+    font-size: 0.85rem;
+    color: #2a2a2a;
+    line-height: 1.5;
+    animation: popupIn 0.4s cubic-bezier(0.16,1,0.3,1) forwards;
+    transform-origin: bottom right;
+  }
+  .chat-fab-popup strong { color: #1a3a5c; font-family: "Lora", serif; }
+  @keyframes popupIn {
+    from { opacity: 0; transform: scale(0.85); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  .chat-fab-btn {
+    width: 62px;
+    height: 62px;
+    background: linear-gradient(135deg, #1a3a5c 0%, #2d5f8a 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+    box-shadow: 0 8px 28px rgba(26,58,92,0.4);
+    cursor: pointer;
+    border: none;
+    position: relative;
+    transition: transform 0.2s;
+  }
+  .chat-fab-btn:hover { transform: scale(1.08); }
+  .chat-fab-badge {
+    position: absolute;
+    top: 0; right: 0;
+    width: 18px; height: 18px;
+    background: #c8952a;
+    border-radius: 50%;
+    border: 2px solid white;
+    animation: pulseBadge 2s infinite;
+  }
+  @keyframes pulseBadge {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.2); opacity: 0.7; }
+  }
+  .chat-panel {
+    position: fixed;
+    bottom: 90px;
+    right: 28px;
+    width: 360px;
+    max-width: calc(100vw - 40px);
+    background: white;
+    border-radius: 24px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2), 0 0 0 1px rgba(0,0,0,0.06);
+    z-index: 1000;
+    overflow: hidden;
+    display: none;
+    flex-direction: column;
+  }
+  .chat-panel.open { display: flex; animation: panelIn 0.4s cubic-bezier(0.16,1,0.3,1) forwards; }
+  @keyframes panelIn {
+    from { opacity: 0; transform: scale(0.9) translateY(20px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  .chat-panel-header {
+    background: linear-gradient(135deg, #1a3a5c 0%, #2d5f8a 100%);
+    padding: 18px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .chat-panel-avatar {
+    width: 42px; height: 42px;
+    background: linear-gradient(135deg, #c8952a, #f0c060);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem; flex-shrink: 0;
+  }
+  .chat-panel-name { font-family: "Lora", serif; color: white; font-size: 0.95rem; font-weight: 600; }
+  .chat-panel-status { display: flex; align-items: center; gap: 5px; margin-top: 2px; }
+  .chat-panel-dot {
+    width: 6px; height: 6px;
+    background: #4ade80; border-radius: 50%;
+    animation: pulseBadge 2s infinite;
+  }
+  .chat-panel-status span { color: rgba(255,255,255,0.6); font-size: 0.72rem; font-family: "Nunito", sans-serif; }
+  .chat-panel-close {
+    margin-left: auto;
+    background: rgba(255,255,255,0.15);
+    border: none; color: white;
+    width: 30px; height: 30px;
+    border-radius: 50%; cursor: pointer;
+    font-size: 1rem;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s;
+  }
+  .chat-panel-close:hover { background: rgba(255,255,255,0.25); }
+  .chat-panel-messages {
+    padding: 20px 16px;
+    background: #f8f6f2;
+    flex: 1;
+    min-height: 260px; max-height: 320px;
+    overflow-y: auto;
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .cp-msg { display: flex; gap: 8px; align-items: flex-end; }
+  .cp-msg-av {
+    width: 26px; height: 26px;
+    background: linear-gradient(135deg, #1a3a5c, #2d5f8a);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.7rem; color: #f0c060; flex-shrink: 0;
+  }
+  .cp-bubble {
+    background: white;
+    border-radius: 16px 16px 16px 4px;
+    padding: 10px 14px;
+    font-family: "Nunito", sans-serif;
+    font-size: 0.83rem; color: #2a2a2a; line-height: 1.5;
+    max-width: 85%;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  }
+  .chat-panel-input {
+    padding: 14px 16px;
+    background: white;
+    border-top: 1px solid #ede9e3;
+    display: flex; gap: 8px; align-items: center;
+  }
+  .cp-input {
+    flex: 1;
+    background: #f5f2ed;
+    border: none; border-radius: 50px;
+    padding: 10px 16px;
+    font-family: "Nunito", sans-serif;
+    font-size: 0.83rem; color: #2a2a2a; outline: none;
+  }
+  .cp-input::placeholder { color: #aaa; }
+  .cp-send {
+    width: 38px; height: 38px;
+    background: linear-gradient(135deg, #1a3a5c, #2d5f8a);
+    border: none; border-radius: 50%;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; transition: transform 0.2s;
+  }
+  .cp-send:hover { transform: scale(1.08); }
+  .cp-send svg { width: 16px; height: 16px; fill: white; }
+</style>
+
+<div class="chat-fab-wrap" id="chatFabWrap">
+  <div class="chat-fab-popup" id="chatPopup">
+    <strong>Ciao! 👋</strong><br>
+    Dimmi dove vuoi andare — ti preparo un preventivo gratis!
+  </div>
+  <button class="chat-fab-btn" onclick="apriChat()" title="Chatta con noi">
+    ✈️
+    <div class="chat-fab-badge"></div>
+  </button>
+</div>
+
+<div class="chat-panel" id="chatPanel">
+  <div class="chat-panel-header">
+    <div class="chat-panel-avatar">✈️</div>
+    <div>
+      <div class="chat-panel-name">Viaggi d'Autore AI</div>
+      <div class="chat-panel-status">
+        <div class="chat-panel-dot"></div>
+        <span>Consulente virtuale attivo</span>
+      </div>
+    </div>
+    <button class="chat-panel-close" onclick="chiudiChat()">✕</button>
+  </div>
+  <div class="chat-panel-messages" id="chatMessages">
+    <div class="cp-msg">
+      <div class="cp-msg-av">✈</div>
+      <div class="cp-bubble">Ciao! 👋 Sono il consulente virtuale di <strong>Viaggi d'Autore</strong>.<br><br>Dimmi dove vuoi andare e le date — ti preparo un preventivo completo gratis!</div>
+    </div>
+  </div>
+  <div class="chat-panel-input">
+    <input class="cp-input" id="cpInput" type="text" placeholder="Es: Venezia dal 5 al 10 aprile…" onkeydown="if(event.key==='Enter') inviaMsgDemo()">
+    <button class="cp-send" onclick="inviaMsgDemo()">
+      <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+    </button>
+  </div>
+</div>
+
+<script>
+  setTimeout(() => {
+    const popup = document.getElementById('chatPopup');
+    if (popup) popup.style.display = 'none';
+  }, 5000);
+
+  function apriChat() {
+    document.getElementById('chatFabWrap').style.display = 'none';
+    document.getElementById('chatPanel').classList.add('open');
+  }
+
+  function chiudiChat() {
+    document.getElementById('chatPanel').classList.remove('open');
+    document.getElementById('chatFabWrap').style.display = 'flex';
+  }
+
+  function inviaMsgDemo() {
+    const input = document.getElementById('cpInput');
+    const testo = input.value.trim();
+    if (!testo) return;
+    const msgs = document.getElementById('chatMessages');
+    const userMsg = document.createElement('div');
+    userMsg.style.cssText = 'display:flex;flex-direction:row-reverse;gap:8px;align-items:flex-end;';
+    userMsg.innerHTML = '<div style="background:linear-gradient(135deg,#1a3a5c,#2d5f8a);border-radius:16px 16px 4px 16px;padding:10px 14px;font-family:Nunito,sans-serif;font-size:0.83rem;color:white;max-width:85%;box-shadow:0 2px 8px rgba(0,0,0,0.07);">' + testo + '</div>';
+    msgs.appendChild(userMsg);
+    input.value = '';
+    msgs.scrollTop = msgs.scrollHeight;
+    setTimeout(() => {
+      const botMsg = document.createElement('div');
+      botMsg.className = 'cp-msg';
+      botMsg.innerHTML = '<div class="cp-msg-av">✈</div><div class="cp-bubble">Sto cercando le migliori opzioni per te… ✈️<br><br>Per il preventivo completo con volo, hotel e itinerario, scrivimi su <strong>WhatsApp</strong> — rispondo subito!</div>';
+      msgs.appendChild(botMsg);
+      const waBtn = document.createElement('a');
+      waBtn.href = 'https://wa.me/393494100204?text=Ciao!%20Vorrei%20un%20preventivo%20per%20' + encodeURIComponent(testo);
+      waBtn.target = '_blank';
+      waBtn.style.cssText = 'display:inline-flex;align-items:center;gap:8px;background:#25D366;color:white;padding:10px 20px;border-radius:50px;text-decoration:none;font-family:Nunito,sans-serif;font-size:0.82rem;font-weight:700;margin-left:34px;margin-top:4px;box-shadow:0 4px 14px rgba(37,211,102,0.3);';
+      waBtn.innerHTML = '💬 Scrivimi su WhatsApp';
+      msgs.appendChild(waBtn);
+      msgs.scrollTop = msgs.scrollHeight;
+    }, 1200);
+  }
+</script>
+
 </body>
 </html>

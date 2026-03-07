@@ -1,28 +1,27 @@
-const { GoogleGenerativeAI } = require("@google/generative-ai");
+const axios = require('axios');
 
 exports.handler = async (event) => {
-  // 1. Prendi la chiave dalle variabili di Netlify
-  const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-
   try {
-    // 2. Leggi il messaggio inviato dal tuo index.html
     const data = JSON.parse(event.body);
-    const testoUtente = data.messaggio; // Il tuo sito usa 'messaggio'
+    
+    // INCOLLA QUI IL TUO URL WEBHOOK DI N8N (Production URL)
+    const n8nWebhookUrl = "https://TUO_N8N_URL/webhook/chat-viaggi";
 
-    // 3. Chiedi a Gemini
-    const result = await model.generateContent(testoUtente);
-    const response = await result.response;
-    const testoIA = response.text();
+    const response = await axios.post(n8nWebhookUrl, {
+      messaggio: data.messaggio
+    });
+
+    // n8n restituisce l'output dell'AI Agent
+    const rispostaIA = response.data.output || response.data.risposta || "Ecco la tua proposta di viaggio!";
 
     return {
       statusCode: 200,
-      body: JSON.stringify({ risposta: testoIA }), // Il tuo sito aspetta 'risposta'
+      body: JSON.stringify({ risposta: rispostaIA }),
     };
   } catch (error) {
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: "Errore nel cervello dell'IA" }),
+      body: JSON.stringify({ risposta: "Il sistema è occupato. Contattaci su WhatsApp per un preventivo!" }),
     };
   }
 };

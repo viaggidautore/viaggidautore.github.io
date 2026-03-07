@@ -1,10 +1,6 @@
 [build]
   publish = "public"
+  ignore = "exit 0"
 
 [functions]
   directory = "netlify/functions"
-
-[[plugins]]
-  package = "@netlify/plugin-nextjs"
-  [plugins.inputs]
-    excludedRoutes = ["/*"]

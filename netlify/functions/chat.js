@@ -5,7 +5,7 @@ exports.handler = async (event) => {
     const data = JSON.parse(event.body);
     
     // INCOLLA QUI IL TUO URL WEBHOOK DI N8N (Production URL)
-    const n8nWebhookUrl = https://garnett-cleistogamic-unslowly.ngrok-free.dev/webhook/chat-viaggi;
+    const n8nWebhookUrl = "https://garnett-cleistogamic-unslowly.ngrok-free.dev/webhook/chat-viaggi";
 
     const response = await axios.post(n8nWebhookUrl, {
       messaggio: data.messaggio

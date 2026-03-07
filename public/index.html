@@ -1371,15 +1371,16 @@
     const typing = aggiungiTyping(msgs);
 
     try {
-      const response = await fetch('/.netlify/functions/chat', {
+      const response = await fetch('https://garnett-cleistogamic-unslowly.ngrok-free.dev/webhook/chat-viaggi', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ messaggio: testo })
       });
       const data = await response.json();
       typing.remove();
-      if (data.risposta) {
-        aggiungiRispostaBot(msgs, data.risposta);
+      const testo_risposta = data.risposta || data.output || data.text || data.message || (typeof data === 'string' ? data : null);
+      if (testo_risposta) {
+        aggiungiRispostaBot(msgs, testo_risposta);
         segnaSimulazioneUsata();
         setTimeout(() => aggiungiBlocco(msgs), 2000);
       } else {

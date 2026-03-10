@@ -1378,6 +1378,9 @@
     const typing = aggiungiTyping(msgs);
 
     try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 90000);
+
       const response = await fetch('https://garnett-cleistogamic-unslowly.ngrok-free.dev/webhook/chat-viaggi', {
         method: 'POST',
         headers: { 
@@ -1385,8 +1388,11 @@
           'ngrok-skip-browser-warning': '69420',
           'User-Agent': 'ViaggiDAutore-Chat/1.0'
         },
-        body: JSON.stringify({ messaggio: testo })
+        body: JSON.stringify({ messaggio: testo }),
+        signal: controller.signal
       });
+
+      clearTimeout(timeout);
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -1405,7 +1411,11 @@
     } catch (error) {
       console.error('Errore chat:', error);
       typing.remove();
-      aggiungiRispostaBot(msgs, 'Connessione non riuscita. Riprova tra poco.');
+      if (error.name === 'AbortError') {
+        aggiungiRispostaBot(msgs, 'La ricerca sta richiedendo più tempo del solito. Riprova tra poco.');
+      } else {
+        aggiungiRispostaBot(msgs, 'Connessione non riuscita. Riprova tra poco.');
+      }
     }
 
     input.disabled = false;

@@ -45,6 +45,11 @@
     z-index: 100;
     box-shadow: 0 2px 20px rgba(0,0,0,0.2);
   }
+  .nav-left {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
   .nav-logo {
     font-family: 'Lora', serif;
     font-size: 1.4rem;
@@ -695,11 +700,13 @@
 
 <!-- NAV -->
 <nav>
-  <a href="#" class="nav-logo">Viaggi d'<span>Autore</span></a>
-  <a href="https://wa.me/393494100204?text=Ciao!%20Vorrei%20informazioni%20per%20organizzare%20un%20viaggio." class="nav-wa">
-    <svg><use href="#wa-icon"/></svg>
-    Scrivici su WhatsApp
-  </a>
+  <div class="nav-left">
+    <a href="#" class="nav-logo">Viaggi d'<span>Autore</span></a>
+    <a href="https://wa.me/393494100204?text=Ciao!%20Vorrei%20informazioni%20per%20organizzare%20un%20viaggio." class="nav-wa">
+      <svg><use href="#wa-icon"/></svg>
+      Scrivici su WhatsApp
+    </a>
+  </div>
 </nav>
 
 <!-- HERO -->
@@ -1072,8 +1079,8 @@
 <style>
   .chat-fab-wrap {
     position: fixed;
-    top: 180px;
-    right: 28px;
+    top: 58px;
+    right: 40px;
     z-index: 999;
     display: flex;
     flex-direction: column;
@@ -1369,7 +1376,8 @@
     input.value = '';
     input.disabled = true;
     const typing = aggiungiTyping(msgs);
-      try {
+
+    try {
       const response = await fetch('https://garnett-cleistogamic-unslowly.ngrok-free.dev/webhook/chat-viaggi', {
         method: 'POST',
         headers: { 
@@ -1390,14 +1398,11 @@
       if (data.risposta) {
         aggiungiRispostaBot(msgs, data.risposta);
         segnaSimulazioneUsata();
+        setTimeout(() => aggiungiBlocco(msgs), 2000);
       } else {
         aggiungiRispostaBot(msgs, 'Mi dispiace, si è verificato un errore. Riprova tra poco.');
       }
     } catch (error) {
-      console.error('Errore chat:', error);
-      typing.remove();
-      aggiungiRispostaBot(msgs, 'Connessione non riuscita. Riprova tra poco.');
-    }
       console.error('Errore chat:', error);
       typing.remove();
       aggiungiRispostaBot(msgs, 'Connessione non riuscita. Riprova tra poco.');

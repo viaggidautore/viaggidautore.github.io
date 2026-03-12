@@ -1305,14 +1305,9 @@
 
   // Controllo simulazione usata (cookie)
   function simulazioneUsata() {
-    return document.cookie.split(';').some(c => c.trim().startsWith('sim_usata=1'));
-  }
+    return false;}
 
-  function segnaSimulazioneUsata() {
-    const scadenza = new Date();
-    scadenza.setDate(scadenza.getDate() + 30);
-    document.cookie = 'sim_usata=1; expires=' + scadenza.toUTCString() + '; path=/';
-  }
+  function segnaSimulazioneUsata() {}
 
   function aggiungiBlocco(msgs) {
     const blocco = document.createElement('div');

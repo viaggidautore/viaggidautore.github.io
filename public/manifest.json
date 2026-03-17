@@ -1,0 +1,25 @@
+{
+  "name": "Viaggi d'Autore",
+  "short_name": "Viaggi",
+  "description": "Il tuo consulente di viaggi personale — preventivo gratuito in 30 secondi",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fdf8f0",
+  "theme_color": "#1a3a5c",
+  "orientation": "portrait",
+  "lang": "it",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

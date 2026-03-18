@@ -570,24 +570,25 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 16px;
-    background: var(--verde-wa);
+    gap: 12px;
+    background: linear-gradient(135deg, #1a3a5c 0%, #c8952a 100%);
     color: white;
-    padding: 24px 40px;
+    padding: 20px 40px;
     border-radius: 100px;
     text-decoration: none;
-    font-size: 1.25rem;
+    font-size: 1.1rem;
     font-weight: 700;
     transition: all 0.3s;
-    box-shadow: 0 8px 30px rgba(37,211,102,0.45);
+    box-shadow: 0 8px 30px rgba(26,58,92,0.45);
     width: 100%;
+    border: none;
+    cursor: pointer;
   }
   .wa-btn-grande:hover {
-    background: var(--verde-wa-dark);
     transform: translateY(-3px);
-    box-shadow: 0 14px 40px rgba(37,211,102,0.55);
+    box-shadow: 0 14px 40px rgba(26,58,92,0.55);
   }
-  .wa-btn-grande svg { width: 32px; height: 32px; fill: white; flex-shrink: 0; }
+  .wa-btn-grande svg { width: 28px; height: 28px; fill: white; flex-shrink: 0; }
   .cta-garanzie {
     display: flex;
     justify-content: center;
@@ -1058,7 +1059,7 @@
         <li style="color:rgba(255,255,255,0.9); display:flex; align-items:center; gap:10px;"><span style="color:var(--oro-chiaro); font-size:1.1rem;">✓</span> Ristoranti tipici consigliati</li>
         <li style="color:rgba(255,255,255,0.9); display:flex; align-items:center; gap:10px;"><span style="color:var(--oro-chiaro); font-size:1.1rem;">✓</span> Assistenza WhatsApp fino alla partenza</li>
       </ul>
-      <a href="https://wa.me/393494100204?text=Ciao!%20Vorrei%20il%20servizio%20completo%20per%20organizzare%20il%20mio%20viaggio." style="display:inline-flex; align-items:center; gap:12px; background:var(--verde-wa); color:white; padding:18px 40px; border-radius:100px; text-decoration:none; font-size:1.1rem; font-weight:700; box-shadow:0 8px 30px rgba(37,211,102,0.5);">
+      <a href="https://wa.me/393494100204?text=Ciao!%20Vorrei%20il%20servizio%20completo%20per%20organizzare%20il%20mio%20viaggio." style="display:inline-flex; align-items:center; gap:12px; background:transparent; color:#999; padding:10px 20px; border-radius:100px; text-decoration:none; font-size:0.85rem; font-weight:500; border:1.5px solid #ddd;">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
         Inizia ora su WhatsApp
       </a>
@@ -1072,15 +1073,14 @@
   <div class="section-inner">
     <p class="section-tag fade-in">Inizia adesso</p>
     <h2 class="section-title fade-in">Il tuo prossimo viaggio<br>inizia da <em>un messaggio.</em></h2>
-    <p class="fade-in">Hai difficoltà a prenotare online? Scrivici su WhatsApp — ricevi un preventivo completo gratuito. Se ti piace, organizziamo tutto per Te.</p>
+    <p class="fade-in">Usa la chat qui sotto — preventivo completo automatico in 30 secondi. Voli reali, hotel con prezzi aggiornati, itinerario giorno per giorno. Gratis.</p>
 
     <div class="cta-box fade-in">
-      <p class="cta-box-title">📱 Scrivici su WhatsApp</p>
-      <p class="cta-box-sub">Siamo qui per aiutarti. Una persona reale, non un robot.</p>
-      <a href="https://wa.me/393494100204?text=Ciao!%20Vorrei%20organizzare%20un%20viaggio%20ma%20non%20so%20da%20dove%20iniziare.%20Puoi%20aiutarmi%3F" class="wa-btn-grande">
-        <svg><use href="#wa-icon"/></svg>
-        Scrivimi su WhatsApp
-      </a>
+      <p class="cta-box-title">💬 Preventivo automatico gratuito</p>
+      <p class="cta-box-sub">Clicca sul pulsante blu in basso a destra — risposta in 30 secondi!</p>
+      <button onclick="apriChat()" class="wa-btn-grande">
+        ✈ Apri la Chat — Preventivo Gratuito in 30 secondi
+      </button>
       <div class="cta-garanzie">
         <div class="garanzia"><span class="garanzia-check">✓</span> Risposta veloce</div>
         <div class="garanzia"><span class="garanzia-check">✓</span> Nessun impegno</div>
@@ -1163,9 +1163,9 @@
   }
   .chat-fab-btn {
     height: auto;
-    padding: 12px 20px 12px 10px;
+    padding: 16px 26px 16px 14px;
     background: linear-gradient(135deg, #1a3a5c 0%, #c8952a 100%);
-    border-radius: 16px;
+    border-radius: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1309,11 +1309,11 @@
 <div class="chat-fab-wrap" id="chatFabWrap">
   <div class="chat-fab-popup" id="chatPopup">
     <strong>Ciao! 👋</strong><br>
-    Dimmi dove vuoi andare — ti preparo un preventivo gratis!
+    ✈ Scrivi destinazione e date — preventivo completo in 30 secondi, gratis!
   </div>
   <button class="chat-fab-btn" onclick="apriChat()" title="Chatta con noi">
     <img src="data:image/png;base64,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" style="width:42px;height:42px;border-radius:50%;object-fit:cover;border:2px solid white;flex-shrink:0;">
-    <span class="chat-fab-label">Clicca qui per Creare il tuo<br><small style='font-weight:400;font-size:0.75rem;'>Pacchetto Viaggio — Voli, Hotel &amp; Itinerario</small></span>
+    <span class="chat-fab-label">✈ Preventivo Gratuito<br><small style='font-weight:400;font-size:0.78rem;'>Voli + Hotel + Itinerario in 30 secondi</small></span>
     <div class="chat-fab-badge"></div>
   </button>
 </div>

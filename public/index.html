@@ -813,6 +813,14 @@ footer {
   </a>
 </section>
 
+<!-- BANNER RISORSE -->
+<div style="background:#c8952a;padding:20px 24px;text-align:center;max-width:100%;overflow:hidden;">
+  <p style="color:white;font-size:0.9rem;margin-bottom:10px;font-weight:500;">Vuoi prenotare in autonomia? Trovi tutti i nostri partner consigliati — voli, hotel, esperienze e altro.</p>
+  <a href="/risorse.html" style="display:inline-flex;align-items:center;gap:8px;background:white;color:#0f1f35;padding:10px 24px;border-radius:50px;text-decoration:none;font-weight:700;font-size:0.9rem;font-family:inherit;">
+    🔗 Vai ai link partner →
+  </a>
+</div>
+
 <!-- FOOTER -->
 <footer>
   <div class="footer-brand">Viaggi d'<span>Autore</span></div>
@@ -821,7 +829,7 @@ footer {
     <a href="javascript:void(0)" onclick="document.getElementById('chatInput').focus(); window.scrollTo({top:0,behavior:'smooth'});">Crea Preventivo</a>
     <a href="https://wa.me/393494100204">WhatsApp</a>
     <a href="https://g.page/r/CUlSgoIbMcdiEBM/review" target="_blank">Recensioni Google</a>
-    <a href="/risorse.html">Prenota in autonomia</a>
+    <a href="/risorse.html" style="color:var(--gold-light);font-weight:700;">🔗 Prenota in autonomia →</a>
   </div>
   <div class="footer-legal">Viaggi d'Autore è un servizio di assistenza alla prenotazione. Non siamo un'agenzia viaggi. Alcuni link sono affiliati: se prenoti tramite i nostri link, riceviamo una piccola commissione senza alcun costo aggiuntivo per te.</div>
   <div class="footer-copy" style="margin-top:12px;">© 2026 Viaggi d'Autore · Tutti i diritti riservati</div>
@@ -890,6 +898,78 @@ function inviaQuickReply() {
   inviaMsg();
 }
 
+function formatRisposta(text) {
+  // Escape HTML entities first
+  text = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+  // Titoli riconoscibili (tutto maiuscolo oppure con : alla fine)
+  const headerPatterns = [
+    /^(TRENO ANDATA.*|TRENO RITORNO.*|HOTEL.*|ITINERARIO.*|RISTORANTI.*|COSTO.*|VOLO.*|VOLI.*|HOTEL CONSIGLIATO.*|GIORNO \d+.*|DAY \d+.*)/i
+  ];
+
+  const lines = text.split(/\n/);
+  let html = '';
+  let inList = false;
+
+  lines.forEach(line => {
+    line = line.trim();
+    if (!line) {
+      if (inList) { html += '</ul>'; inList = false; }
+      html += '<div style="height:6px"></div>';
+      return;
+    }
+
+    // Linea separatore
+    if (/^[-─—]{3,}$/.test(line)) {
+      if (inList) { html += '</ul>'; inList = false; }
+      html += '<hr style="border:none;border-top:1px solid #e5e7eb;margin:8px 0;">';
+      return;
+    }
+
+    // Sezione titolo (tutto maiuscolo o termina con :)
+    const isHeader = /^[A-ZÀÈÉÌÒÙA-Z\s\/\-:0-9]{5,}$/.test(line) || 
+                     (line.endsWith(':') && line.length < 40) ||
+                     /^(TRENO|HOTEL|ITINERARIO|RISTORANTI|COSTO|VOLO|GIORNO|DAY|PARTENZA|ARRIVO|ANDATA|RITORNO)/i.test(line);
+
+    if (isHeader) {
+      if (inList) { html += '</ul>'; inList = false; }
+      html += `<div style="font-weight:700;color:#0f1f35;margin-top:12px;margin-bottom:4px;font-size:0.88rem;letter-spacing:0.04em;border-left:3px solid #c8952a;padding-left:8px;">${line}</div>`;
+      return;
+    }
+
+    // Riga con etichetta tipo "Partenza: Bologna ore 07:05"
+    if (/^(Partenza|Arrivo|Treno|Durata|Compagnia|Aereo|Volo|Hotel|Costo|Totale|Prezzo|Tariffa|Notte|EUR|€)/i.test(line) || 
+        /^[A-Za-zÀ-ÿ ]+:/.test(line)) {
+      if (inList) { html += '</ul>'; inList = false; }
+      // Metti in grassetto la parte prima dei :
+      const boldLine = line.replace(/^([^:]+):/, '<strong>$1:</strong>');
+      html += `<div style="margin:3px 0;font-size:0.88rem;color:#374151;padding-left:4px;">${boldLine}</div>`;
+      return;
+    }
+
+    // Voce di lista (inizia con - o •)
+    if (/^[-•*]\s/.test(line)) {
+      if (!inList) { html += '<ul style="margin:4px 0 4px 16px;padding:0;">'; inList = true; }
+      html += `<li style="margin:2px 0;font-size:0.88rem;color:#374151;">${line.replace(/^[-•*]\s/, '')}</li>`;
+      return;
+    }
+
+    // Riga numerata tipo "Giorno 1: ..."
+    if (/^\d+[.)]\s/.test(line) || /^Giorno \d+/i.test(line)) {
+      if (inList) { html += '</ul>'; inList = false; }
+      html += `<div style="margin:3px 0;font-size:0.88rem;color:#374151;padding-left:4px;">${line}</div>`;
+      return;
+    }
+
+    // Testo normale
+    if (inList) { html += '</ul>'; inList = false; }
+    html += `<div style="margin:3px 0;font-size:0.88rem;color:#374151;">${line}</div>`;
+  });
+
+  if (inList) html += '</ul>';
+  return html;
+}
+
 async function inviaMsg() {
   const input = document.getElementById('chatInput');
   const testo = input.value.trim();
@@ -928,7 +1008,7 @@ async function inviaMsg() {
     const data = await res.json();
     typing.remove();
     if (data.risposta) {
-      addMsg(data.risposta, false);
+      addMsg(formatRisposta(data.risposta), false);
       if (data.risposta.includes('SI VOGLIO SERVIZIO')) showQuickReply();
       segnaSimUsata();
     } else {

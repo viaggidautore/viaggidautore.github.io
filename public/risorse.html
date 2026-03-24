@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Prenota in Autonomia — Viaggi d'Autore</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { overflow-x: hidden; max-width: 100%; }
+:root {
+  --navy: #0f1f35; --navy-mid: #1a3050; --gold: #c8952a; --gold-light: #e8b84b;
+  --cream: #fdf8f0; --white: #ffffff; --text: #1a1a2e; --text-light: #5a6070;
+  --green: #25D366; --green-dark: #1da851;
+}
+body { font-family: 'DM Sans', sans-serif; color: var(--text); background: var(--cream); font-size: 16px; }
+
+/* NAV */
+nav {
+  background: var(--navy); padding: 16px 24px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 200;
+  box-shadow: 0 2px 24px rgba(0,0,0,0.3);
+}
+.nav-brand { font-family: 'Playfair Display', serif; font-size: 1.25rem; color: white; letter-spacing: 0.04em; text-decoration: none; }
+.nav-brand span { color: var(--gold-light); font-style: italic; }
+.nav-back {
+  display: flex; align-items: center; gap: 6px;
+  color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.85rem;
+  transition: color 0.2s;
+}
+.nav-back:hover { color: var(--gold-light); }
+
+/* HERO */
+.hero {
+  background: linear-gradient(160deg, var(--navy) 0%, var(--navy-mid) 100%);
+  padding: 48px 24px 40px; text-align: center;
+  position: relative; overflow: hidden;
+}
+.hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 5vw, 2.8rem); color: white; margin-bottom: 12px; }
+.hero h1 em { color: var(--gold-light); font-style: italic; }
+.hero-sub { color: rgba(255,255,255,0.65); font-size: 1rem; max-width: 520px; margin: 0 auto 24px; line-height: 1.7; }
+.hero-note {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(200,149,42,0.15); border: 1px solid rgba(200,149,42,0.3);
+  color: var(--gold-light); padding: 8px 18px; border-radius: 50px;
+  font-size: 0.8rem; font-weight: 600;
+}
+
+/* MAIN */
+main { max-width: 800px; margin: 0 auto; padding: 48px 20px 60px; }
+
+.category { margin-bottom: 48px; }
+.category-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.4rem; color: var(--navy);
+  margin-bottom: 6px; font-weight: 700;
+  display: flex; align-items: center; gap: 10px;
+}
+.category-desc { color: var(--text-light); font-size: 0.88rem; margin-bottom: 20px; line-height: 1.6; }
+.cards { display: flex; flex-direction: column; gap: 12px; }
+
+.card {
+  display: flex; align-items: center; gap: 16px;
+  background: white; border-radius: 14px; padding: 16px 18px;
+  text-decoration: none; color: var(--text);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+  border: 1px solid rgba(0,0,0,0.06);
+  transition: all 0.25s;
+}
+.card:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(0,0,0,0.12); border-color: var(--gold); }
+.card-logo {
+  width: 44px; height: 44px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.3rem; flex-shrink: 0; font-weight: 700; color: white;
+}
+.card-info { flex: 1; }
+.card-name { font-weight: 700; font-size: 0.95rem; margin-bottom: 3px; }
+.card-desc { font-size: 0.8rem; color: var(--text-light); line-height: 1.4; }
+.card-arrow { color: var(--gold); font-size: 1.1rem; flex-shrink: 0; }
+
+/* CTA WhatsApp */
+.wa-cta {
+  background: var(--navy); border-radius: 20px; padding: 32px 24px;
+  text-align: center; margin-top: 48px;
+}
+.wa-cta h2 { font-family: 'Playfair Display', serif; color: white; font-size: 1.4rem; margin-bottom: 10px; }
+.wa-cta p { color: rgba(255,255,255,0.6); font-size: 0.9rem; margin-bottom: 24px; line-height: 1.6; }
+.wa-btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: var(--green); color: white; padding: 14px 32px;
+  border-radius: 50px; text-decoration: none; font-weight: 700;
+  font-size: 0.95rem; transition: all 0.3s;
+  box-shadow: 0 4px 16px rgba(37,211,102,0.4);
+}
+.wa-btn:hover { background: var(--green-dark); transform: translateY(-2px); }
+.wa-btn svg { width: 20px; height: 20px; fill: white; }
+
+/* FOOTER */
+footer {
+  background: #080f1c; padding: 32px 24px; text-align: center;
+}
+.footer-brand { font-family: 'Playfair Display', serif; color: white; font-size: 1rem; margin-bottom: 8px; }
+.footer-brand span { color: var(--gold-light); font-style: italic; }
+.footer-back { color: rgba(255,255,255,0.35); font-size: 0.78rem; text-decoration: none; }
+.footer-back:hover { color: var(--gold-light); }
+.footer-legal { color: rgba(255,255,255,0.18); font-size: 0.68rem; margin-top: 12px; max-width: 600px; margin-left: auto; margin-right: auto; line-height: 1.6; }
+
+/* WA float */
+.wa-float {
+  position: fixed; bottom: 24px; right: 24px;
+  width: 56px; height: 56px; background: var(--green);
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 6px 24px rgba(37,211,102,0.45);
+  text-decoration: none; z-index: 999; transition: all 0.3s;
+}
+.wa-float:hover { transform: scale(1.1); }
+.wa-float svg { width: 28px; height: 28px; fill: white; }
+
+@media (max-width: 520px) {
+  main { padding: 32px 16px 48px; }
+  .hero { padding: 36px 16px 32px; }
+}
+</style>
+</head>
+<body>
+
+<svg style="display:none">
+  <symbol id="wa-icon" viewBox="0 0 24 24">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+  </symbol>
+</svg>
+
+<nav>
+  <a href="/" class="nav-brand">Viaggi d'<span>Autore</span></a>
+  <a href="/" class="nav-back">← Torna alla home</a>
+</nav>
+
+<div class="hero">
+  <h1>Prenota <em>in autonomia</em></h1>
+  <p class="hero-sub">I nostri partner selezionati per voli, hotel, esperienze e molto altro. Prenotando tramite questi link ci aiuti a mantenere il servizio gratuito — senza nessun costo aggiuntivo per te.</p>
+  <div class="hero-note">💡 Stessa identica tariffa — nessun sovrapprezzo</div>
+</div>
+
+<main>
+
+  <!-- VOLI -->
+  <div class="category">
+    <div class="category-title">✈️ Voli</div>
+    <p class="category-desc">Le migliori piattaforme per trovare e prenotare voli. Se non sai da dove iniziare, usa prima la nostra chat — ti diciamo noi quale volo prendere.</p>
+    <div class="cards">
+      <a href="https://www.jdoqocy.com/click-101689694-15536175" target="_blank" rel="noopener" class="card">
+        <div class="card-logo" style="background:#003580;">EX</div>
+        <div class="card-info">
+          <div class="card-name">Expedia</div>
+          <div class="card-desc">Voli, hotel e pacchetti tutto incluso. Ottimo per confrontare prezzi.</div>
+        </div>
+        <div class="card-arrow">→</div>
+      </a>
+      <a href="https://www.tkqlhce.com/click-101689694-12119680" target="_blank" rel="noopener" class="card">
+        <div class="card-logo" style="background:#c8102e;">IB</div>
+        <div class="card-info">
+          <div class="card-name">Iberia</div>
+          <div class="card-desc">Compagnia aerea spagnola, ottima per destinazioni iberiche e sudamericane.</div>
+        </div>
+        <div class="card-arrow">→</div>
+      </a>
+      <a href="https://sg.trip.com/flights/welcome/?to=home&Allianceid=7945218&SID=299124554&trip_sub1=&trip_sub3=D13815272" target="_blank" rel="noopener" class="card">
+        <div class="card-logo" style="background:#0072c6;">TC</div>
+        <div class="card-info">
+          <div class="card-name">Trip.com — Voli</div>
+          <div class="card-desc">Ampia scelta di voli internazionali, spesso con tariffe competitive.</div>
+        </div>
+        <div class="card-arrow">→</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- HOTEL -->
+  <div class="category">
+    <div class="category-title">🏨 Hotel</div>
+    <p class="category-desc">Per trovare l'alloggio giusto — non solo il più economico, ma quello nel posto migliore per le tue esigenze.</p>
+    <div class="cards">
+      <a href="https://www.jdoqocy.com/click-101689694-15536175" target="_blank" rel="noopener" class="card">
+        <div class="card-logo" style="background:#003580;">EX</div>
+        <div class="card-info">
+          <div class="card-name">Expedia — Hotel</div>
+          <div class="card-desc">Migliaia di hotel con recensioni verificate e prezzi trasparenti.</div>
+        </div>
+        <div class="card-arrow">→</div>
+      </a>
+      <a href="https://sg.trip.com/hotels/w/home?Allianceid=7945218&SID=299124554&trip_sub1=&trip_sub3=D13815272" target="_blank" rel="noopener" class="card">
+        <div class="card-logo" style="background:#0072c6;">TC</div>
+        <div class="card-info">
+          <div class="card-name">Trip.com — Hotel</div>
+          <div class="card-desc">Hotel in tutto il mondo con prezzi flessibili e cancellazione gratuita.</div>
+        </div>
+        <div class="card-arrow">→</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- ESPERIENZE -->
+  <div class="category">
+    <div class="category-title">🗺️ Esperienze e tour</div>
+    <p class="category-desc">Tour guidati, escursioni, degustazioni, musei e attività locali nelle destinazioni più belle del mondo.</p>
+    <div class="cards">
+      <a href="https://www.getyourguide.it?partner_id=DF4U25L&cmp=share_to_earn" target="_blank" rel="noopener" class="card">
+        <div class="card-logo" style="background:#ff5533;">GY</div>
+        <div class="card-info">
+          <div class="card-name">GetYourGuide</div>
+          <div class="card-desc">La piattaforma leader per esperienze e tour. Prenotazione immediata.</div>
+        </div>
+        <div class="card-arrow">→</div>
+      </a>
+      <a href="https://www.civitatis.com/it/?aid=112168" target="_blank" rel="noopener" class="card">
+        <div class="card-logo" style="background:#00c0a0;">CV</div>
+        <div class="card-info">
+          <div class="card-name">Civitatis</div>
+          <div class="card-desc">Tour in italiano con guide madrelingua. Perfetto per chi preferisce capire tutto.</div>
+        </div>
+        <div class="card-arrow">→</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- TRENI E PACCHETTI -->
+  <div class="category">
+    <div class="category-title">🚆 Treni e pacchetti</div>
+    <p class="category-desc">Per chi preferisce viaggiare in treno in Europa, o vuole prenotare volo + hotel insieme.</p>
+    <div class="cards">
+      <a href="https://sg.trip.com/trains/eurotrains/?Allianceid=7945218&SID=299124554&trip_sub1=&trip_sub3=D13815272" target="_blank" rel="noopener" class="card">
+        <div class="card-logo" style="background:#0072c6;">TC</div>
+        <div class="card-info">
+          <div class="card-name">Trip.com — Treni Europei</div>
+          <div class="card-desc">Eurostar, TGV, Thalys e tanti altri treni europei in un'unica piattaforma.</div>
+        </div>
+        <div class="card-arrow">→</div>
+      </a>
+      <a href="https://sg.trip.com/packages/?Allianceid=7945218&SID=299124554&trip_sub1=&trip_sub3=D13815272" target="_blank" rel="noopener" class="card">
+        <div class="card-logo" style="background:#005fa3;">TC</div>
+        <div class="card-info">
+          <div class="card-name">Trip.com — Volo + Hotel</div>
+          <div class="card-desc">Pacchetti combinati spesso più convenienti della prenotazione separata.</div>
+        </div>
+        <div class="card-arrow">→</div>
+      </a>
+      <a href="https://sg.trip.com/carhire/?Allianceid=7945218&SID=299124554&trip_sub1=&trip_sub3=D13815272" target="_blank" rel="noopener" class="card">
+        <div class="card-logo" style="background:#e84545;">CA</div>
+        <div class="card-info">
+          <div class="card-name">Trip.com — Noleggio Auto</div>
+          <div class="card-desc">Auto a noleggio in tutto il mondo con confronto prezzi tra i principali fornitori.</div>
+        </div>
+        <div class="card-arrow">→</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- ALTRO -->
+  <div class="category">
+    <div class="category-title">🛡️ Sicurezza e altro</div>
+    <p class="category-desc">Strumenti utili per viaggiare in sicurezza e prepararsi al meglio.</p>
+    <div class="cards">
+      <a href="https://go.nordvpn.net/aff_c?offer_id=15&aff_id=141927&url_id=858" target="_blank" rel="noopener" class="card">
+        <div class="card-logo" style="background:#4687ff;">NV</div>
+        <div class="card-info">
+          <div class="card-name">NordVPN</div>
+          <div class="card-desc">Proteggi la tua connessione in hotel e aeroporti. Semplice da usare anche per chi non è esperto di tecnologia.</div>
+        </div>
+        <div class="card-arrow">→</div>
+      </a>
+      <a href="https://www.amazon.it/?tag=viaggidautore-21" target="_blank" rel="noopener" class="card">
+        <div class="card-logo" style="background:#ff9900;color:#111;">AZ</div>
+        <div class="card-info">
+          <div class="card-name">Amazon — Guide di viaggio</div>
+          <div class="card-desc">Lonely Planet, Touring Club e le migliori guide cartacee e digitali. Comode da ordinare a casa.</div>
+        </div>
+        <div class="card-arrow">→</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- CTA WhatsApp -->
+  <div class="wa-cta">
+    <h2>Preferisci che pensiamo noi a tutto?</h2>
+    <p>Torna sulla chat e scrivi dove vuoi andare — ti prepariamo un preventivo completo in 30 secondi. Gratis.</p>
+    <a href="/" class="wa-btn" style="background:var(--gold);margin-right:12px;">← Torna alla chat</a>
+    <a href="https://wa.me/393494100204?text=Ciao!%20Vorrei%20organizzare%20un%20viaggio." target="_blank" class="wa-btn">
+      <svg><use href="#wa-icon"/></svg>
+      WhatsApp
+    </a>
+  </div>
+
+</main>
+
+<footer>
+  <div class="footer-brand">Viaggi d'<span>Autore</span></div>
+  <div style="margin-top:8px;"><a href="/" class="footer-back">← Torna alla homepage</a></div>
+  <div class="footer-legal">Alcuni link presenti in questa pagina sono link affiliati. Prenotando tramite questi link riceviamo una piccola commissione senza alcun costo aggiuntivo per te. Viaggi d'Autore è un servizio di assistenza alla prenotazione, non un'agenzia viaggi.</div>
+</footer>
+
+<a href="https://wa.me/393494100204" class="wa-float" aria-label="WhatsApp">
+  <svg><use href="#wa-icon"/></svg>
+</a>
+
+</body>
+</html>

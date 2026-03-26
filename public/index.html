@@ -357,6 +357,26 @@ nav {
 .chat-send:hover { background: var(--navy-mid); transform: scale(1.05); }
 .chat-send svg { width: 18px; height: 18px; fill: white; }
 
+/* Chat hint */
+.chat-hint {
+  text-align: center;
+  padding: 10px 16px 4px;
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.5);
+  letter-spacing: 0.03em;
+}
+.chat-hint strong { color: var(--gold-light); font-weight: 600; }
+
+/* Input pulse on load */
+@keyframes input-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(200,149,42,0); border-color: #e2e5eb; }
+  50% { box-shadow: 0 0 0 4px rgba(200,149,42,0.25); border-color: var(--gold); }
+  100% { box-shadow: 0 0 0 0 rgba(200,149,42,0); border-color: #e2e5eb; }
+}
+.chat-input.pulse-once {
+  animation: input-pulse 1.2s ease 1s 2;
+}
+
 /* ── INFO ROW ── */
 .info-row {
   background: var(--navy);
@@ -713,16 +733,15 @@ footer {
         <button class="quick-reply-btn" onclick="inviaQuickReply()">✅ SI VOGLIO SERVIZIO</button>
       </div>
       <div class="chat-input-area">
-        <input class="chat-input" id="chatInput" type="text" placeholder="Es: Barcellona dal 10 al 15 maggio, 2 persone…" autocomplete="off">
+        <input class="chat-input" id="chatInput" type="text" placeholder="✈️ Scrivi qui: dove vuoi andare, quando e quante persone…" autocomplete="off">
         <button class="chat-send" id="chatSend" onclick="inviaMsg()">
           <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
         </button>
       </div>
+      <div class="chat-hint">👆 <strong>Scrivi qui</strong> la tua destinazione e ricevi volo + hotel + itinerario in <strong>30 secondi</strong></div>
     </div>
   </div>
 </section>
-
-<!-- INFO ROW -->
 <div class="info-row">
   <div class="info-item">
     <div class="info-num">30"</div>
@@ -1027,6 +1046,9 @@ async function inviaMsg() {
 document.getElementById('chatInput').addEventListener('keydown', e => {
   if (e.key === 'Enter') inviaMsg();
 });
+
+// Pulse input on load to guide user
+document.getElementById('chatInput').classList.add('pulse-once');
 </script>
 
 </body>

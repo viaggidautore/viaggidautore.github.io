@@ -918,7 +918,29 @@ function inviaQuickReply() {
 }
 
 function formatRisposta(text) {
-  // Escape HTML entities first
+  // Se il testo contiene già tag HTML (es. <b>, <hr>), applicare solo
+  // uno stile base e restituirlo direttamente senza ulteriore processing
+  if (/<b>|<hr>|<strong>|<br>|<ul>|<li>/i.test(text)) {
+    // Converti i tag di base in HTML stilizzato
+    let html = text
+      // <hr> → separatore stilizzato
+      .replace(/<hr\s*\/?>/gi, '<hr style="border:none;border-top:1px solid #e5e7eb;margin:10px 0;">')
+      // <b>...</b> → titoli con stile o grassetto
+      .replace(/<b>(.*?)<\/b>/gi, (match, content) => {
+        // Se la riga è tutta un titolo (es. sezioni maiuscole o emoji + testo)
+        if (/^[✈🏨🗓🍽💶🛏🏠\s]*[A-ZÀÈÉÌÒÙ\s\d\-\/📍]+$/.test(content.trim()) || content.length < 60) {
+          return `<span style="display:block;font-weight:700;color:#0f1f35;margin-top:10px;margin-bottom:3px;font-size:0.88rem;letter-spacing:0.03em;border-left:3px solid #c8952a;padding-left:8px;">${content}</span>`;
+        }
+        return `<strong>${content}</strong>`;
+      })
+      // * voce lista → <li>
+      .replace(/^\* (.+)$/gm, '<li style="margin:2px 0 2px 16px;font-size:0.88rem;color:#374151;list-style:disc;">$1</li>')
+      // A capo → divisori leggeri tra righe
+      .replace(/\n/g, '<div style="height:3px"></div>');
+    return `<div style="font-size:0.88rem;color:#374151;line-height:1.6;">${html}</div>`;
+  }
+
+  // Altrimenti: testo normale → escape + formattazione manuale
   text = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
   // Titoli riconoscibili (tutto maiuscolo oppure con : alla fine)

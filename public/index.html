@@ -1,0 +1,1350 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Viaggi d'Autore — Preventivo Viaggio in 30 Secondi</title>
+
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ME8ECL7MBY"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-ME8ECL7MBY');
+</script>
+
+<!-- PWA -->
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#0a0f1e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Viaggi d'Autore">
+<link rel="apple-touch-icon" href="/icon-192.png">
+
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  overflow-x: hidden;
+  max-width: 100%;
+  width: 100%;
+}
+
+:root {
+  --ink: #0a0f1e;
+  --ink-mid: #141c30;
+  --ink-soft: #1e2a45;
+  --amber: #d4922a;
+  --amber-light: #f0b84a;
+  --amber-glow: rgba(212,146,42,0.18);
+  --sand: #f7f3ec;
+  --white: #ffffff;
+  --text: #1a1a2e;
+  --text-muted: #6b7385;
+  --green: #25D366;
+  --green-dark: #1da851;
+  --border: rgba(255,255,255,0.08);
+  --border-light: rgba(0,0,0,0.07);
+}
+
+body {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 400;
+  color: var(--text);
+  background: var(--sand);
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* ── NAV ── */
+nav {
+  background: rgba(10,15,30,0.97);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding: 14px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  border-bottom: 1px solid var(--border);
+}
+.nav-brand {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: var(--white);
+  letter-spacing: 0.02em;
+}
+.nav-brand span { color: var(--amber-light); font-style: italic; }
+.nav-wa {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--green);
+  color: white;
+  padding: 9px 18px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.82rem;
+  letter-spacing: 0.03em;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+.nav-wa:hover { background: var(--green-dark); transform: translateY(-1px); }
+.nav-wa svg { width: 17px; height: 17px; fill: white; flex-shrink: 0; }
+
+/* ── HERO ── */
+.hero {
+  background: var(--ink);
+  padding: 64px 24px 56px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.hero-grid {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(rgba(212,146,42,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(212,146,42,0.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+  pointer-events: none;
+}
+.hero-glow-1 {
+  position: absolute;
+  top: -20%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 600px;
+  height: 400px;
+  background: radial-gradient(ellipse, rgba(212,146,42,0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-glow-2 {
+  position: absolute;
+  bottom: -10%;
+  right: -10%;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(37,211,102,0.05) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--amber-glow);
+  border: 1px solid rgba(212,146,42,0.25);
+  color: var(--amber-light);
+  padding: 5px 14px;
+  border-radius: 4px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+  position: relative;
+  z-index: 1;
+}
+.hero-eyebrow-dot {
+  width: 5px;
+  height: 5px;
+  background: var(--amber);
+  border-radius: 50%;
+  animation: pulse-dot 2s infinite;
+}
+
+.hero h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2.4rem, 7vw, 4rem);
+  color: var(--white);
+  line-height: 1.1;
+  margin-bottom: 20px;
+  font-weight: 300;
+  letter-spacing: -0.01em;
+  position: relative;
+  z-index: 1;
+}
+.hero h1 strong {
+  font-weight: 600;
+  color: var(--amber-light);
+  font-style: italic;
+}
+.hero-sub {
+  font-size: clamp(0.95rem, 2.5vw, 1.1rem);
+  color: rgba(255,255,255,0.55);
+  line-height: 1.8;
+  max-width: 500px;
+  margin: 0 auto 40px;
+  font-weight: 300;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── BADGES ── */
+.hero-badges {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  flex-wrap: wrap;
+  margin-bottom: 44px;
+  position: relative;
+  z-index: 1;
+}
+.hero-badge {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: rgba(255,255,255,0.45);
+  font-size: 0.8rem;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
+.hero-badge-line {
+  width: 16px;
+  height: 1px;
+  background: var(--amber);
+  opacity: 0.6;
+}
+
+/* ── CHAT SECTION ── */
+.chat-section {
+  max-width: 620px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 2;
+}
+
+.chat-card {
+  background: var(--white);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 
+    0 0 0 1px rgba(212,146,42,0.15),
+    0 24px 64px rgba(0,0,0,0.4),
+    0 8px 24px rgba(0,0,0,0.25);
+}
+
+/* Chat header */
+.chat-label {
+  background: linear-gradient(135deg, #141c30 0%, #1e2a45 100%);
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid rgba(212,146,42,0.12);
+}
+.chat-label-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1.5px solid rgba(212,146,42,0.4);
+  flex-shrink: 0;
+}
+.chat-label-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.chat-label-name {
+  font-family: 'Cormorant Garamond', serif;
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+.chat-label-status {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 2px;
+}
+.status-dot {
+  width: 6px;
+  height: 6px;
+  background: #4ade80;
+  border-radius: 50%;
+  animation: pulse-dot 2s infinite;
+}
+@keyframes pulse-dot {
+  0%,100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(0.8); }
+}
+.chat-label-status span {
+  color: rgba(255,255,255,0.4);
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.chat-label-timer {
+  margin-left: auto;
+  background: var(--amber-glow);
+  border: 1px solid rgba(212,146,42,0.3);
+  border-radius: 6px;
+  padding: 4px 10px;
+  color: var(--amber-light);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* Chat messages */
+.chat-messages {
+  padding: 20px 16px 12px;
+  min-height: 160px;
+  max-height: 320px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: #f8f9fb;
+}
+.chat-messages::-webkit-scrollbar { width: 3px; }
+.chat-messages::-webkit-scrollbar-track { background: transparent; }
+.chat-messages::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 4px; }
+
+.msg-row { display: flex; gap: 8px; align-items: flex-end; }
+.msg-av {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+  border: 1.5px solid rgba(212,146,42,0.3);
+}
+.msg-av img { width: 100%; height: 100%; object-fit: cover; }
+
+.msg-bubble {
+  max-width: 78%;
+  padding: 11px 15px;
+  border-radius: 12px 12px 12px 4px;
+  background: var(--white);
+  color: #1a1f2e;
+  font-size: 0.87rem;
+  line-height: 1.65;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05), 0 4px 12px rgba(0,0,0,0.04);
+  border: 1px solid rgba(0,0,0,0.06);
+}
+
+.msg-user { flex-direction: row-reverse; }
+.msg-user .msg-bubble {
+  background: linear-gradient(135deg, var(--ink) 0%, var(--ink-soft) 100%);
+  color: #fff;
+  border-radius: 12px 12px 4px 12px;
+  border: none;
+  box-shadow: 0 2px 8px rgba(10,15,30,0.25), 0 6px 20px rgba(10,15,30,0.15);
+}
+
+.msg-typing {
+  display: flex;
+  gap: 4px;
+  padding: 13px 16px;
+  align-items: center;
+  background: var(--white);
+  border-radius: 12px 12px 12px 4px;
+  width: fit-content;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  border: 1px solid rgba(0,0,0,0.06);
+}
+.msg-typing span {
+  width: 5px; height: 5px;
+  background: var(--amber);
+  border-radius: 50%;
+  opacity: 0.5;
+  animation: bounce 1.3s infinite ease-in-out;
+}
+.msg-typing span:nth-child(2) { animation-delay: 0.18s; }
+.msg-typing span:nth-child(3) { animation-delay: 0.36s; }
+@keyframes bounce {
+  0%,60%,100% { transform: translateY(0); opacity: 0.5; }
+  30% { transform: translateY(-5px); opacity: 1; }
+}
+
+/* Quick reply */
+.quick-reply-wrap { padding: 0 16px 12px; background: #f8f9fb; }
+.quick-reply-btn {
+  background: linear-gradient(135deg, var(--ink) 0%, var(--ink-soft) 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 11px 22px;
+  font-size: 0.86rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s;
+  box-shadow: 0 3px 12px rgba(10,15,30,0.25);
+  letter-spacing: 0.02em;
+}
+.quick-reply-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(10,15,30,0.35); }
+.quick-reply-btn:active { transform: translateY(0); }
+
+/* Input area */
+.chat-input-area {
+  display: flex;
+  gap: 10px;
+  padding: 12px 14px;
+  border-top: 1px solid rgba(0,0,0,0.06);
+  background: var(--white);
+  align-items: center;
+}
+.chat-input {
+  flex: 1;
+  border: 1.5px solid #e8eaf0;
+  border-radius: 8px;
+  padding: 11px 16px;
+  font-family: inherit;
+  font-size: 0.87rem;
+  color: var(--text);
+  background: #f8f9fb;
+  outline: none;
+  transition: all 0.2s;
+}
+.chat-input:focus {
+  border-color: var(--ink);
+  background: white;
+  box-shadow: 0 0 0 3px rgba(10,15,30,0.06);
+}
+.chat-input::placeholder { color: #a0a8b8; }
+
+.chat-send {
+  width: 42px;
+  height: 42px;
+  background: var(--ink);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s;
+  box-shadow: 0 3px 10px rgba(10,15,30,0.3);
+}
+.chat-send:hover {
+  background: var(--ink-soft);
+  transform: scale(1.06);
+  box-shadow: 0 5px 16px rgba(10,15,30,0.4);
+}
+.chat-send:active { transform: scale(0.97); }
+.chat-send svg { width: 16px; height: 16px; fill: white; margin-left: 1px; }
+
+.chat-hint {
+  text-align: center;
+  padding: 8px 16px 4px;
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.35);
+  letter-spacing: 0.03em;
+}
+.chat-hint strong { color: var(--amber-light); font-weight: 600; }
+
+@keyframes input-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(212,146,42,0); border-color: #e8eaf0; }
+  50% { box-shadow: 0 0 0 4px rgba(212,146,42,0.18); border-color: var(--amber); }
+  100% { box-shadow: 0 0 0 0 rgba(212,146,42,0); border-color: #e8eaf0; }
+}
+.chat-input.pulse-once { animation: input-pulse 1.3s ease 1s 2; }
+
+/* ── INFO ROW ── */
+.info-row {
+  background: var(--ink-mid);
+  padding: 32px 24px;
+  display: flex;
+  justify-content: center;
+  gap: 48px;
+  flex-wrap: wrap;
+  border-top: 1px solid rgba(212,146,42,0.1);
+}
+.info-item { text-align: center; }
+.info-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2rem;
+  color: var(--amber-light);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+.info-label {
+  color: rgba(255,255,255,0.38);
+  font-size: 0.72rem;
+  margin-top: 5px;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* ── COME FUNZIONA ── */
+.how-section {
+  padding: 80px 24px;
+  background: var(--sand);
+}
+.how-inner { max-width: 680px; margin: 0 auto; }
+.section-tag {
+  font-size: 0.68rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--amber);
+  font-weight: 600;
+  margin-bottom: 14px;
+}
+.section-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.8rem, 4.5vw, 2.8rem);
+  color: var(--ink);
+  line-height: 1.15;
+  margin-bottom: 48px;
+  font-weight: 300;
+}
+.section-title em { color: var(--amber); font-style: italic; }
+
+.steps { display: flex; flex-direction: column; gap: 0; }
+.step-item {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+  padding: 28px 0;
+  border-bottom: 1px solid var(--border-light);
+}
+.step-item:last-child { border-bottom: none; }
+.step-num-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+}
+.step-num {
+  width: 40px;
+  height: 40px;
+  background: var(--ink);
+  color: var(--amber-light);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.2rem;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+.step-line {
+  width: 1px;
+  flex: 1;
+  background: var(--border-light);
+  margin-top: 8px;
+  min-height: 32px;
+}
+.step-item:last-child .step-line { display: none; }
+.step-emoji { font-size: 1.4rem; margin-bottom: 6px; }
+.step-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.15rem;
+  color: var(--ink);
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+.step-desc {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  line-height: 1.75;
+}
+.step-example {
+  background: rgba(10,15,30,0.04);
+  border-left: 2px solid var(--amber);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  margin-top: 10px;
+  font-style: italic;
+  font-size: 0.83rem;
+  color: var(--ink);
+  opacity: 0.8;
+}
+
+/* ── CHI SONO ── */
+.about-section {
+  padding: 80px 24px;
+  background: var(--white);
+  border-top: 1px solid var(--border-light);
+}
+.about-inner {
+  max-width: 680px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 36px;
+  align-items: start;
+}
+.about-photo {
+  width: 100px;
+  height: 100px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1.5px solid rgba(212,146,42,0.3);
+  box-shadow: 0 8px 24px rgba(10,15,30,0.12);
+}
+.about-photo img { width: 100%; height: 100%; object-fit: cover; }
+.about-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.6rem;
+  color: var(--ink);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.about-role {
+  color: var(--amber);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+.about-text {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.85;
+  margin-bottom: 22px;
+}
+.about-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--green);
+  color: white;
+  padding: 11px 22px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.87rem;
+  transition: all 0.2s;
+  box-shadow: 0 4px 16px rgba(37,211,102,0.35);
+  letter-spacing: 0.02em;
+}
+.about-cta:hover { background: var(--green-dark); transform: translateY(-2px); }
+.about-cta svg { width: 17px; height: 17px; fill: white; flex-shrink: 0; }
+
+/* ── RECENSIONI ── */
+.review-section {
+  padding: 80px 24px;
+  background: var(--ink);
+  text-align: center;
+}
+.review-section .section-tag { color: var(--amber-light); }
+.review-section .section-title { color: white; margin-bottom: 16px; }
+.review-desc {
+  color: rgba(255,255,255,0.5);
+  font-size: 0.9rem;
+  margin-bottom: 40px;
+  max-width: 480px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.8;
+}
+.review-cards {
+  display: flex;
+  gap: 16px;
+  max-width: 720px;
+  margin: 0 auto 40px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.review-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  padding: 24px;
+  text-align: left;
+  flex: 1;
+  min-width: 240px;
+  max-width: 320px;
+  transition: all 0.2s;
+}
+.review-card:hover {
+  background: rgba(255,255,255,0.07);
+  border-color: rgba(212,146,42,0.2);
+}
+.review-stars {
+  color: var(--amber);
+  font-size: 0.8rem;
+  margin-bottom: 12px;
+  letter-spacing: 2px;
+}
+.review-text {
+  color: rgba(255,255,255,0.75);
+  font-size: 0.87rem;
+  line-height: 1.75;
+  font-style: italic;
+  margin-bottom: 16px;
+}
+.review-author {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.review-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--amber) 0%, var(--amber-light) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  font-family: 'Cormorant Garamond', serif;
+}
+.review-name {
+  color: rgba(255,255,255,0.5);
+  font-size: 0.78rem;
+  font-weight: 500;
+}
+.review-trip {
+  color: rgba(212,146,42,0.6);
+  font-size: 0.7rem;
+  margin-top: 1px;
+}
+
+.review-cta-wrap { margin-top: 8px; }
+.review-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--green);
+  color: white;
+  padding: 13px 28px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+  box-shadow: 0 4px 20px rgba(37,211,102,0.35);
+  letter-spacing: 0.02em;
+}
+.review-cta:hover { background: var(--green-dark); transform: translateY(-2px); }
+.review-cta svg { width: 18px; height: 18px; fill: white; flex-shrink: 0; }
+
+/* ── INCLUSO ── */
+.include-section {
+  padding: 80px 24px;
+  background: var(--sand);
+}
+.include-inner { max-width: 680px; margin: 0 auto; }
+.include-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.include-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: var(--white);
+  border: 1px solid var(--border-light);
+  border-radius: 10px;
+  padding: 18px;
+  transition: all 0.2s;
+}
+.include-item:hover { border-color: rgba(212,146,42,0.25); }
+.include-icon {
+  width: 36px;
+  height: 36px;
+  background: var(--ink);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+.include-text {}
+.include-title {
+  font-weight: 600;
+  font-size: 0.87rem;
+  color: var(--ink);
+  margin-bottom: 3px;
+}
+.include-desc {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* ── FINAL CTA ── */
+.final-section {
+  background: linear-gradient(160deg, var(--ink) 0%, var(--ink-mid) 100%);
+  padding: 80px 24px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.final-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(rgba(212,146,42,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(212,146,42,0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+  pointer-events: none;
+}
+.final-tag {
+  font-size: 0.68rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--amber);
+  font-weight: 600;
+  margin-bottom: 16px;
+  position: relative;
+  z-index: 1;
+}
+.final-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.8rem, 5vw, 2.8rem);
+  color: white;
+  font-weight: 300;
+  line-height: 1.15;
+  margin-bottom: 16px;
+  position: relative;
+  z-index: 1;
+}
+.final-title strong { font-weight: 600; font-style: italic; color: var(--amber-light); }
+.final-sub {
+  color: rgba(255,255,255,0.45);
+  font-size: 0.9rem;
+  margin-bottom: 36px;
+  position: relative;
+  z-index: 1;
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.final-cta-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+  z-index: 1;
+}
+.final-cta-wa {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--green);
+  color: white;
+  padding: 14px 32px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.95rem;
+  transition: all 0.2s;
+  box-shadow: 0 6px 24px rgba(37,211,102,0.4);
+  letter-spacing: 0.02em;
+}
+.final-cta-wa:hover { background: var(--green-dark); transform: translateY(-2px); }
+.final-cta-wa svg { width: 20px; height: 20px; fill: white; flex-shrink: 0; }
+.final-note {
+  color: rgba(255,255,255,0.25);
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+}
+
+/* ── FOOTER ── */
+footer {
+  background: #060b17;
+  padding: 28px 24px;
+  text-align: center;
+  border-top: 1px solid rgba(212,146,42,0.08);
+}
+.footer-brand {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.5);
+  margin-bottom: 6px;
+}
+.footer-brand span { color: var(--amber); font-style: italic; }
+.footer-text {
+  color: rgba(255,255,255,0.18);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+}
+
+/* ── MOBILE ── */
+@media (max-width: 600px) {
+  .about-inner { grid-template-columns: 1fr; gap: 20px; }
+  .include-grid { grid-template-columns: 1fr; }
+  .info-row { gap: 28px; }
+  .review-card { min-width: 100%; }
+  nav { padding: 12px 16px; }
+  .hero { padding: 48px 20px 40px; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-brand">Viaggi <span>d'Autore</span></div>
+  <a class="nav-wa" href="https://wa.me/393407039861" target="_blank" rel="noopener">
+    <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+    WhatsApp
+  </a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow-1"></div>
+  <div class="hero-glow-2"></div>
+
+  <div class="hero-eyebrow">
+    <span class="hero-eyebrow-dot"></span>
+    Consulente AI · Risposta in 30 secondi
+  </div>
+
+  <h1>Il tuo viaggio perfetto,<br><strong>progettato su misura</strong></h1>
+
+  <p class="hero-sub">Scrivi dove vuoi andare e ricevi volo, hotel e itinerario completo — gratis, in pochi secondi.</p>
+
+  <div class="hero-badges">
+    <div class="hero-badge"><span class="hero-badge-line"></span>Voli in tempo reale</div>
+    <div class="hero-badge"><span class="hero-badge-line"></span>Hotel selezionati</div>
+    <div class="hero-badge"><span class="hero-badge-line"></span>Itinerario personalizzato</div>
+  </div>
+
+  <!-- CHAT -->
+  <div class="chat-section">
+    <div class="chat-card">
+      <div class="chat-label">
+        <div class="chat-label-avatar">
+          <img src="/claudio.jpg" alt="Claudio" onerror="this.style.background='linear-gradient(135deg,#d4922a,#f0b84a)';this.style.display='flex';this.alt='C'">
+        </div>
+        <div>
+          <div class="chat-label-name">Claudio · Viaggi d'Autore</div>
+          <div class="chat-label-status">
+            <span class="status-dot"></span>
+            <span>Online ora</span>
+          </div>
+        </div>
+        <div class="chat-label-timer">⚡ 30 sec</div>
+      </div>
+
+      <div class="chat-messages" id="chatMessages">
+        <div class="msg-row">
+          <div class="msg-av">
+            <img src="/claudio.jpg" alt="C" onerror="this.parentElement.style.background='linear-gradient(135deg,#d4922a,#f0b84a)'">
+          </div>
+          <div class="msg-bubble">Ciao! 👋 Sono il consulente virtuale di <strong>Viaggi d'Autore</strong>.<br><br>Dimmi dove vuoi andare e le date — ti preparo un <strong>preventivo completo gratis</strong> in 30 secondi!</div>
+        </div>
+      </div>
+
+      <div id="quickReplyWrap" class="quick-reply-wrap" style="display:none;">
+        <button class="quick-reply-btn" onclick="inviaQuickReply()">✅ SI VOGLIO SERVIZIO</button>
+      </div>
+
+      <div class="chat-input-area">
+        <input class="chat-input" id="chatInput" type="text" placeholder="✈️ Dove vuoi andare, quando e quante persone…" autocomplete="off">
+        <button class="chat-send" id="chatSend" onclick="inviaMsg()">
+          <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+        </button>
+      </div>
+
+      <div class="chat-hint">👆 <strong>Scrivi qui</strong> e ricevi volo + hotel + itinerario in <strong>30 secondi</strong></div>
+    </div>
+  </div>
+</section>
+
+<!-- INFO ROW -->
+<div class="info-row">
+  <div class="info-item">
+    <div class="info-num">200+</div>
+    <div class="info-label">Viaggi pianificati</div>
+  </div>
+  <div class="info-item">
+    <div class="info-num">30"</div>
+    <div class="info-label">Preventivo gratuito</div>
+  </div>
+  <div class="info-item">
+    <div class="info-num">4.9★</div>
+    <div class="info-label">Soddisfazione clienti</div>
+  </div>
+  <div class="info-item">
+    <div class="info-num">49€</div>
+    <div class="info-label">Tutto incluso</div>
+  </div>
+</div>
+
+<!-- COME FUNZIONA -->
+<section class="how-section">
+  <div class="how-inner">
+    <div class="section-tag">Come funziona</div>
+    <h2 class="section-title">Il preventivo perfetto<br>in <em>tre passi</em></h2>
+    <div class="steps">
+      <div class="step-item">
+        <div class="step-num-wrap">
+          <div class="step-num">1</div>
+          <div class="step-line"></div>
+        </div>
+        <div class="step-content">
+          <div class="step-emoji">💬</div>
+          <div class="step-title">Descrivi il tuo viaggio</div>
+          <p class="step-desc">Scrivi nella chat destinazione, date e numero di persone. Niente moduli, niente attese — solo una conversazione naturale.</p>
+          <div class="step-example">"Voglio andare a Barcellona dal 10 al 17 maggio, siamo in 2"</div>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num-wrap">
+          <div class="step-num">2</div>
+          <div class="step-line"></div>
+        </div>
+        <div class="step-content">
+          <div class="step-emoji">⚡</div>
+          <div class="step-title">Ricevi il preventivo in 30 secondi</div>
+          <p class="step-desc">L'AI cerca i voli migliori in tempo reale, seleziona gli hotel e crea un itinerario su misura. Tutto in pochi secondi.</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num-wrap">
+          <div class="step-num">3</div>
+          <div class="step-line"></div>
+        </div>
+        <div class="step-content">
+          <div class="step-emoji">✅</div>
+          <div class="step-title">Prenota con Claudio</div>
+          <p class="step-desc">Se il preventivo ti piace, Claudio si occupa di tutto — prenotazioni, conferme e supporto durante il viaggio. Servizio completo a 49€.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INCLUSO -->
+<section class="include-section">
+  <div class="include-inner">
+    <div class="section-tag">Cosa include il servizio</div>
+    <h2 class="section-title">Tutto quello che ti serve,<br><em>senza pensieri</em></h2>
+    <div class="include-grid">
+      <div class="include-item">
+        <div class="include-icon">✈️</div>
+        <div class="include-text">
+          <div class="include-title">Ricerca voli</div>
+          <div class="include-desc">Le migliori tariffe in tempo reale tra economy, velocità e consigliato</div>
+        </div>
+      </div>
+      <div class="include-item">
+        <div class="include-icon">🏨</div>
+        <div class="include-text">
+          <div class="include-title">Selezione hotel</div>
+          <div class="include-desc">B&B, 3 stelle e appartamenti selezionati per qualità e posizione</div>
+        </div>
+      </div>
+      <div class="include-item">
+        <div class="include-icon">🗺️</div>
+        <div class="include-text">
+          <div class="include-title">Itinerario su misura</div>
+          <div class="include-desc">Giorno per giorno, con ristoranti, attrazioni e consigli pratici</div>
+        </div>
+      </div>
+      <div class="include-item">
+        <div class="include-icon">🚂</div>
+        <div class="include-text">
+          <div class="include-title">Treni in Italia</div>
+          <div class="include-desc">Orari e prezzi Trenitalia e Italo integrati nel preventivo</div>
+        </div>
+      </div>
+      <div class="include-item">
+        <div class="include-icon">📋</div>
+        <div class="include-text">
+          <div class="include-title">Prenotazioni complete</div>
+          <div class="include-desc">Claudio gestisce tutto: voli, hotel, transfert e attività</div>
+        </div>
+      </div>
+      <div class="include-item">
+        <div class="include-icon">💬</div>
+        <div class="include-text">
+          <div class="include-title">Supporto WhatsApp</div>
+          <div class="include-desc">Assistenza diretta prima, durante e dopo il tuo viaggio</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CHI SONO -->
+<section class="about-section">
+  <div class="about-inner">
+    <div class="about-photo-wrap">
+      <div class="about-photo">
+        <img src="/claudio.jpg" alt="Claudio Incutto" onerror="this.style.background='linear-gradient(135deg,#0a0f1e,#1e2a45)'">
+      </div>
+    </div>
+    <div class="about-content">
+      <div class="section-tag">Chi sono</div>
+      <div class="about-name">Claudio Incutto</div>
+      <div class="about-role">Consulente di viaggio</div>
+      <p class="about-text">
+        Aiuto persone e famiglie a pianificare viaggi su misura senza stress. Ho combinato la mia esperienza nel turismo con la tecnologia AI per offrire preventivi rapidi, accurati e personalizzati. Ogni viaggio che organizzo è unico, pensato per chi lo vivrà.
+      </p>
+      <a class="about-cta" href="https://wa.me/393407039861" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        Scrivimi su WhatsApp
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- RECENSIONI -->
+<section class="review-section">
+  <div class="section-tag">Clienti felici</div>
+  <h2 class="section-title">Cosa dicono di noi</h2>
+  <p class="review-desc">Ogni preventivo è una storia. Ecco alcune delle esperienze dei nostri clienti.</p>
+  <div class="review-cards">
+    <div class="review-card">
+      <div class="review-stars">★★★★★</div>
+      <p class="review-text">"In pochi minuti avevo già un preventivo completo con volo e hotel. Ho prenotato subito, tutto perfetto."</p>
+      <div class="review-author">
+        <div class="review-avatar">M</div>
+        <div>
+          <div class="review-name">Marco R.</div>
+          <div class="review-trip">Roma → Lisbona</div>
+        </div>
+      </div>
+    </div>
+    <div class="review-card">
+      <div class="review-stars">★★★★★</div>
+      <p class="review-text">"Claudio ha organizzato tutto con una cura incredibile. Il viaggio in Giappone è stato indimenticabile."</p>
+      <div class="review-author">
+        <div class="review-avatar">S</div>
+        <div>
+          <div class="review-name">Sara M.</div>
+          <div class="review-trip">Milano → Tokyo</div>
+        </div>
+      </div>
+    </div>
+    <div class="review-card">
+      <div class="review-stars">★★★★★</div>
+      <p class="review-text">"Servizio professionale e risposta rapidissima. Tornerò sicuramente per il prossimo viaggio."</p>
+      <div class="review-author">
+        <div class="review-avatar">L</div>
+        <div>
+          <div class="review-name">Luca T.</div>
+          <div class="review-trip">Bologna → New York</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="review-cta-wrap">
+    <a class="review-cta" href="https://wa.me/393407039861" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      Inizia il tuo preventivo gratis
+    </a>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="final-section">
+  <div class="final-tag">Pronto a partire?</div>
+  <h2 class="final-title">Il viaggio che sogni<br><strong>comincia da qui</strong></h2>
+  <p class="final-sub">Preventivo gratuito. Nessun obbligo. Solo il tuo prossimo viaggio perfetto.</p>
+  <div class="final-cta-wrap">
+    <a class="final-cta-wa" href="https://wa.me/393407039861" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      Scrivimi su WhatsApp
+    </a>
+    <span class="final-note">Risposta garantita entro 24 ore · Servizio a 49€</span>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">Viaggi <span>d'Autore</span></div>
+  <div class="footer-text">© 2025 Claudio Incutto · Consulente di viaggio · Bologna</div>
+</footer>
+
+<script>
+const WEBHOOK = 'https://a2b9-93-51-54-4.ngrok-free.app/webhook/chat-viaggi';
+const SIM_KEY = 'vda_sim_used';
+
+function simUsata() {
+  return false; // simulazione disabilitata
+}
+function segnaSimUsata() {}
+
+function scrollDown() {
+  const msgs = document.getElementById('chatMessages');
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function addMsg(html, isUser) {
+  const msgs = document.getElementById('chatMessages');
+  const row = document.createElement('div');
+  row.className = 'msg-row' + (isUser ? ' msg-user' : '');
+
+  if (!isUser) {
+    const av = document.createElement('div');
+    av.className = 'msg-av';
+    av.innerHTML = '<img src="/claudio.jpg" alt="C" onerror="this.parentElement.style.background=\'linear-gradient(135deg,#d4922a,#f0b84a)\'">';
+    row.appendChild(av);
+  }
+
+  const bubble = document.createElement('div');
+  bubble.className = 'msg-bubble';
+  if (isUser) {
+    bubble.textContent = html;
+  } else {
+    bubble.innerHTML = html;
+  }
+  row.appendChild(bubble);
+  msgs.appendChild(row);
+  scrollDown();
+  return row;
+}
+
+function addTyping() {
+  const msgs = document.getElementById('chatMessages');
+  const row = document.createElement('div');
+  row.className = 'msg-row';
+  const av = document.createElement('div');
+  av.className = 'msg-av';
+  av.innerHTML = '<img src="/claudio.jpg" alt="C" onerror="this.parentElement.style.background=\'linear-gradient(135deg,#d4922a,#f0b84a)\'">';
+  row.appendChild(av);
+  const typing = document.createElement('div');
+  typing.className = 'msg-typing';
+  typing.innerHTML = '<span></span><span></span><span></span>';
+  row.appendChild(typing);
+  msgs.appendChild(row);
+  scrollDown();
+  return row;
+}
+
+function showQuickReply() {
+  document.getElementById('quickReplyWrap').style.display = 'block';
+}
+
+function inviaQuickReply() {
+  document.getElementById('quickReplyWrap').style.display = 'none';
+  document.getElementById('chatInput').value = 'SI VOGLIO SERVIZIO';
+  inviaMsg();
+}
+
+function formatRisposta(text) {
+  text = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const lines = text.split(/\n/);
+  let html = '';
+  let inList = false;
+
+  lines.forEach(line => {
+    line = line.trim();
+    if (!line) {
+      if (inList) { html += '</ul>'; inList = false; }
+      html += '<div style="height:6px"></div>';
+      return;
+    }
+    if (/^[-─—]{3,}$/.test(line)) {
+      if (inList) { html += '</ul>'; inList = false; }
+      html += '<hr style="border:none;border-top:1px solid #e5e7eb;margin:8px 0;">';
+      return;
+    }
+    const isHeader = /^[A-ZÀÈÉÌÒÙA-Z\s\/\-:0-9]{5,}$/.test(line) ||
+                     (line.endsWith(':') && line.length < 40) ||
+                     /^(TRENO|HOTEL|ITINERARIO|RISTORANTI|COSTO|VOLO|GIORNO|DAY|PARTENZA|ARRIVO|ANDATA|RITORNO)/i.test(line);
+    if (isHeader) {
+      if (inList) { html += '</ul>'; inList = false; }
+      html += `<div style="font-weight:700;color:#0a0f1e;margin-top:12px;margin-bottom:4px;font-size:0.86rem;letter-spacing:0.04em;border-left:2px solid #d4922a;padding-left:8px;">${line}</div>`;
+      return;
+    }
+    if (/^(Partenza|Arrivo|Treno|Durata|Compagnia|Aereo|Volo|Hotel|Costo|Totale|Prezzo|Tariffa|Notte|EUR|€)/i.test(line) ||
+        /^[A-Za-zÀ-ÿ ]+:/.test(line)) {
+      if (inList) { html += '</ul>'; inList = false; }
+      const boldLine = line.replace(/^([^:]+):/, '<strong>$1:</strong>');
+      html += `<div style="margin:3px 0;font-size:0.86rem;color:#374151;padding-left:4px;">${boldLine}</div>`;
+      return;
+    }
+    if (/^[-•*]\s/.test(line)) {
+      if (!inList) { html += '<ul style="margin:4px 0 4px 16px;padding:0;">'; inList = true; }
+      html += `<li style="margin:2px 0;font-size:0.86rem;color:#374151;">${line.replace(/^[-•*]\s/, '')}</li>`;
+      return;
+    }
+    if (/^\d+[.)]\s/.test(line) || /^Giorno \d+/i.test(line)) {
+      if (inList) { html += '</ul>'; inList = false; }
+      html += `<div style="margin:3px 0;font-size:0.86rem;color:#374151;padding-left:4px;">${line}</div>`;
+      return;
+    }
+    if (inList) { html += '</ul>'; inList = false; }
+    html += `<div style="margin:3px 0;font-size:0.86rem;color:#374151;">${line}</div>`;
+  });
+
+  if (inList) html += '</ul>';
+  return html;
+}
+
+async function inviaMsg() {
+  const input = document.getElementById('chatInput');
+  const testo = input.value.trim();
+  if (!testo) return;
+
+  addMsg(testo, true);
+  input.value = '';
+  input.disabled = true;
+  document.getElementById('chatSend').disabled = true;
+
+  if (simUsata()) {
+    setTimeout(() => {
+      addMsg('Per continuare la pianificazione del tuo viaggio, scrivimi su WhatsApp! 👇', false);
+      input.disabled = false;
+      document.getElementById('chatSend').disabled = false;
+    }, 800);
+    return;
+  }
+
+  const typing = addTyping();
+
+  try {
+    const controller = new AbortController();
+    const tid = setTimeout(() => controller.abort(), 120000);
+    const res = await fetch(WEBHOOK, {
+      signal: controller.signal,
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'ngrok-skip-browser-warning': '69420',
+        'User-Agent': 'ViaggiDAutore-Chat/1.0'
+      },
+      body: JSON.stringify({ messaggio: testo })
+    });
+    clearTimeout(tid);
+    const data = await res.json();
+    typing.remove();
+    if (data.risposta) {
+      addMsg(formatRisposta(data.risposta), false);
+      if (data.risposta.includes('SI VOGLIO SERVIZIO')) showQuickReply();
+      segnaSimUsata();
+    } else {
+      addMsg('Mi dispiace, si è verificato un errore. Riprova tra poco.', false);
+    }
+  } catch(e) {
+    typing.remove();
+    addMsg('Connessione non riuscita. Riprova tra poco.', false);
+  }
+
+  input.disabled = false;
+  document.getElementById('chatSend').disabled = false;
+  input.focus();
+}
+
+document.getElementById('chatInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') inviaMsg();
+});
+
+document.getElementById('chatInput').classList.add('pulse-once');
+</script>
+
+</body>
+</html>

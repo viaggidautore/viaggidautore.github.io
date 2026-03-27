@@ -1374,15 +1374,14 @@ document.getElementById('chatInput').addEventListener('keydown', e => {
 document.getElementById('chatInput').classList.add('pulse-once');
 
 function scaricaPDF() {
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+  var jsPDFLib = window.jspdf;
+  if (!jsPDFLib) { alert('Libreria PDF non caricata, riprova tra un secondo.'); return; }
+  var doc = new jsPDFLib.jsPDF({ unit: 'mm', format: 'a4' });
+  var margin = 18;
+  var pageW = 210;
+  var maxW = pageW - margin * 2;
+  var y = 0;
 
-  const margin = 18;
-  const pageW = 210;
-  const maxW = pageW - margin * 2;
-  let y = 0;
-
-  // Header band
   doc.setFillColor(10, 15, 30);
   doc.rect(0, 0, pageW, 28, 'F');
   doc.setFont('helvetica', 'bold');
@@ -1393,54 +1392,43 @@ function scaricaPDF() {
   doc.setFontSize(8);
   doc.setTextColor(180, 180, 200);
   doc.text('Preventivo personalizzato', margin, 19);
-  const oggi = new Date().toLocaleDateString('it-IT', { day:'2-digit', month:'long', year:'numeric' });
+  var oggi = new Date().toLocaleDateString('it-IT', { day:'2-digit', month:'long', year:'numeric' });
   doc.text(oggi, pageW - margin, 19, { align: 'right' });
-
   y = 38;
 
-  // Collect bot messages only
-  const bubbles = document.querySelectorAll('.msg-row:not(.msg-user) .msg-bubble');
-  const allText = [];
-  bubbles.forEach(b => {
-    // Get text content, preserving line breaks from block elements
-    const clone = b.cloneNode(true);
-    // Replace <hr> with dashes line marker
-    clone.querySelectorAll('hr').forEach(hr => hr.replaceWith('
----
-'));
-    // Replace <br> with newline
-    clone.querySelectorAll('br').forEach(br => br.replaceWith('
-'));
-    // Add newline after block divs
-    clone.querySelectorAll('div').forEach(d => { d.after('
-'); });
-    const raw = clone.innerText || clone.textContent || '';
-    allText.push(raw.trim());
-  });
-
-  const fullText = allText.join('
-
-');
-  const lines = fullText.split('
-');
-
-  const checkNewPage = (needed) => {
+  function checkNewPage(needed) {
     if (y + needed > 272) {
       doc.addPage();
-      // Thin header repeat
       doc.setFillColor(10, 15, 30);
       doc.rect(0, 0, pageW, 12, 'F');
       doc.setFont('helvetica', 'italic');
       doc.setFontSize(7);
       doc.setTextColor(240, 184, 74);
-      doc.text("Viaggi d'Autore — Preventivo", margin, 8);
+      doc.text("Viaggi d'Autore - Preventivo", margin, 8);
       y = 22;
     }
-  };
+  }
 
-  lines.forEach(rawLine => {
-    const line = rawLine.trimEnd();
+  var bubbles = document.querySelectorAll('.msg-row:not(.msg-user) .msg-bubble');
+  var allLines = [];
+  bubbles.forEach(function(b) {
+    var clone = b.cloneNode(true);
+    clone.querySelectorAll('hr').forEach(function(hr) {
+      hr.replaceWith(document.createTextNode('\n---\n'));
+    });
+    clone.querySelectorAll('br').forEach(function(br) {
+      br.replaceWith(document.createTextNode('\n'));
+    });
+    clone.querySelectorAll('div, p').forEach(function(d) {
+      d.after(document.createTextNode('\n'));
+    });
+    var txt = (clone.innerText || clone.textContent || '').trim();
+    txt.split('\n').forEach(function(l) { allLines.push(l); });
+    allLines.push('');
+  });
 
+  allLines.forEach(function(rawLine) {
+    var line = rawLine.replace(/\s+$/, '');
     if (!line) { y += 3; return; }
 
     if (/^---+$/.test(line)) {
@@ -1451,10 +1439,8 @@ function scaricaPDF() {
       return;
     }
 
-    // Detect section headers (all-caps or emoji+caps)
-    const isHeader = /^[🏨🛏🏠🗓🍽💶✈🚂⭐][^
-]{0,60}$/.test(line) ||
-                     /^[A-ZÀÈÉÌÒÙA-Z\s\/\-:0-9]{5,}$/.test(line);
+    var isHeader = /^[A-Z\u00C0-\u00DC][A-Z\u00C0-\u00DC\s\/\-:0-9]{4,}$/.test(line) ||
+                   /^[\uD83C-\uDBFF\uDC00-\uDFFF]/.test(line);
 
     if (isHeader) {
       checkNewPage(10);
@@ -1463,54 +1449,50 @@ function scaricaPDF() {
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(9);
       doc.setTextColor(10, 15, 30);
-      const wrapped = doc.splitTextToSize(line, maxW - 6);
+      var wrapped = doc.splitTextToSize(line, maxW - 6);
       doc.text(wrapped, margin + 4, y);
       y += wrapped.length * 5 + 3;
       return;
     }
 
-    // Bold label lines (contain colon)
-    if (/^[^:]{2,30}:/.test(line)) {
+    var colonMatch = /^([^:]{2,30}):(.*)/.exec(line);
+    if (colonMatch) {
       checkNewPage(7);
-      const colonIdx = line.indexOf(':');
-      const label = line.substring(0, colonIdx + 1);
-      const rest = line.substring(colonIdx + 1);
+      var label = colonMatch[1] + ':';
+      var rest = colonMatch[2].trim();
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(8.5);
       doc.setTextColor(30, 42, 69);
-      const labelW = doc.getTextWidth(label) + 1;
+      var lw = doc.getTextWidth(label) + 1;
       doc.text(label, margin, y);
       doc.setFont('helvetica', 'normal');
       doc.setTextColor(55, 65, 81);
-      const restWrapped = doc.splitTextToSize(rest.trim(), maxW - labelW);
-      doc.text(restWrapped, margin + labelW, y);
-      y += restWrapped.length * 5 + 1;
+      var rw = doc.splitTextToSize(rest, maxW - lw);
+      doc.text(rw, margin + lw, y);
+      y += rw.length * 5 + 1;
       return;
     }
 
-    // Normal line
     checkNewPage(7);
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(8.5);
     doc.setTextColor(55, 65, 81);
-    const wrapped = doc.splitTextToSize(line, maxW);
-    doc.text(wrapped, margin, y);
-    y += wrapped.length * 5 + 1;
+    var wr = doc.splitTextToSize(line, maxW);
+    doc.text(wr, margin, y);
+    y += wr.length * 5 + 1;
   });
 
-  // Footer on last page
-  const pageCount = doc.internal.getNumberOfPages();
-  for (let i = 1; i <= pageCount; i++) {
-    doc.setPage(i);
+  var pageCount = doc.internal.getNumberOfPages();
+  for (var pi = 1; pi <= pageCount; pi++) {
+    doc.setPage(pi);
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(7);
     doc.setTextColor(180, 180, 200);
-    doc.text(`Pagina ${i} di ${pageCount} · viaggidautore.it · Claudio Incutto`, pageW / 2, 290, { align: 'center' });
+    doc.text('Pagina ' + pi + ' di ' + pageCount + ' - viaggidautore.it - Claudio Incutto', pageW / 2, 290, { align: 'center' });
   }
 
   doc.save('preventivo-viaggi-dautore.pdf');
 }
-
 </script>
 
 </body>

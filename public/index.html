@@ -342,6 +342,20 @@ nav {
   box-shadow: 0 1px 4px rgba(0,0,0,0.05), 0 4px 12px rgba(0,0,0,0.04);
   border: 1px solid rgba(0,0,0,0.06);
 }
+.msg-bubble b, .msg-bubble strong {
+  font-weight: 700;
+  color: #0a0f1e;
+}
+.msg-bubble hr {
+  border: none;
+  border-top: 1px solid #e5e7eb;
+  margin: 8px 0;
+}
+.msg-bubble br {
+  display: block;
+  content: "";
+  margin-top: 3px;
+}
 
 .msg-user { flex-direction: row-reverse; }
 .msg-user .msg-bubble {
@@ -1335,7 +1349,8 @@ async function inviaMsg() {
     const data = await res.json();
     typing.remove();
     if (data.risposta) {
-      addMsg(formatRisposta(data.risposta), false);
+      const isHtml = /<[a-z][\s\S]*>/i.test(data.risposta);
+      addMsg(isHtml ? data.risposta : formatRisposta(data.risposta), false);
       if (data.risposta.includes('SI VOGLIO SERVIZIO')) showQuickReply();
       segnaSimUsata();
     } else {

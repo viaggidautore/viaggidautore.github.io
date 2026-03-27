@@ -6,7 +6,22 @@
 <title>Viaggi d'Autore — Preventivo Viaggio in 30 Secondi</title>
 
 <!-- Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-ME8ECL7MBY"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ME8ECL7MBY">
+let lastPreventivoTime = 0;
+const PREVENTIVO_COOLDOWN = 5000;
+
+function puoInviarePreventivo(){
+  const now = Date.now();
+  if(now - lastPreventivoTime < PREVENTIVO_COOLDOWN){
+    const sec = Math.ceil((PREVENTIVO_COOLDOWN - (now-lastPreventivoTime))/1000);
+    addMsg("⏳ Attendi "+sec+" secondi prima di fare un nuovo preventivo.", false);
+    return false;
+  }
+  lastPreventivoTime = now;
+  return true;
+}
+
+</script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
@@ -867,14 +882,7 @@ if ('serviceWorker' in navigator) {
 }
 
 const WEBHOOK = 'https://garnett-cleistogamic-unslowly.ngrok-free.dev/webhook/868a702c-ae44-4bbf-bcae-16d953de282e';
-const STORAGE_KEY = 'vda_sim_used';
 
-function simUsata() {
-  return localStorage.getItem(STORAGE_KEY) === '1';
-}
-function segnaSimUsata() {
-  localStorage.setItem(STORAGE_KEY, '1');
-}
 
 function scrollDown() {
   const msgs = document.getElementById('chatMessages');
@@ -1021,14 +1029,7 @@ async function inviaMsg() {
   input.disabled = true;
   document.getElementById('chatSend').disabled = true;
 
-  if (simUsata()) {
-    setTimeout(() => {
-      addMsg('Per continuare la pianificazione del tuo viaggio, scrivimi su WhatsApp! 👇', false);
-      input.disabled = false;
-      document.getElementById('chatSend').disabled = false;
-    }, 800);
-    return;
-  }
+  
 
   const typing = addTyping();
 
@@ -1051,7 +1052,7 @@ async function inviaMsg() {
     if (data.risposta) {
       addMsg(formatRisposta(data.risposta), false);
       if (data.risposta.includes('SI VOGLIO SERVIZIO')) showQuickReply();
-      segnaSimUsata();
+      
     } else {
       addMsg('Mi dispiace, si è verificato un errore. Riprova tra poco.', false);
     }

@@ -1248,40 +1248,56 @@ function showQuickReply() {
 }
 
 function scaricaPDF() {
-  // Raccoglie tutto il testo della chat e genera un PDF stampabile
   const msgs = document.getElementById('chatMessages');
   const bubbles = msgs.querySelectorAll('.msg-bubble');
-  let contenuto = '<html><head><meta charset="UTF-8"><title>Preventivo Viaggi d\'Autore</title>';
-  contenuto += '<style>';
-  contenuto += 'body { font-family: Arial, sans-serif; max-width: 700px; margin: 40px auto; color: #1a1a2e; font-size: 13px; line-height: 1.6; }';
-  contenuto += 'h1 { color: #0a0f1e; font-size: 20px; border-bottom: 2px solid #d4922a; padding-bottom: 8px; margin-bottom: 20px; }';
-  contenuto += '.msg { margin-bottom: 12px; padding: 10px 14px; border-radius: 8px; }';
-  contenuto += '.bot { background: #f5f7fa; border-left: 3px solid #d4922a; }';
-  contenuto += '.user { background: #e8edf5; border-left: 3px solid #0a0f1e; text-align: right; }';
-  contenuto += '.label { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px; color: #6b7385; }';
-  contenuto += 'hr { border: none; border-top: 1px solid #e5e7eb; margin: 8px 0; }';
-  contenuto += '.footer { margin-top: 40px; font-size: 11px; color: #aaa; border-top: 1px solid #eee; padding-top: 12px; }';
-  contenuto += '</style></head><body>';
-  contenuto += '<h1>🧳 Preventivo Viaggi d\'Autore</h1>';
-  contenuto += '<p style="font-size:11px;color:#aaa;margin-bottom:20px;">Generato il ' + new Date().toLocaleDateString('it-IT', {day:'2-digit',month:'long',year:'numeric'}) + '</p>';
+  const data = new Date().toLocaleDateString('it-IT', {day:'2-digit', month:'long', year:'numeric'});
 
-  bubbles.forEach(b => {
+  let righe = '';
+  bubbles.forEach(function(b) {
     const isUser = b.closest('.msg-user') !== null;
-    contenuto += `<div class="msg ${isUser ? 'user' : 'bot'}">`;
-    contenuto += `<div class="label">${isUser ? 'Tu' : 'Claudio · Viaggi d\'Autore'}</div>`;
-    contenuto += b.innerHTML;
-    contenuto += '</div>';
+    let inner = b.innerHTML.replace(/<img[^>]*>/gi, '');
+    const label = isUser ? '\u{1F464} Tu' : '\u{1F9F3} Claudio \u00B7 Viaggi d\u2019Autore';
+    const cls = isUser ? 'user' : 'bot';
+    righe += '<div class="msg ' + cls + '"><div class="label">' + label + '</div><div class="mc">' + inner + '</div></div>';
   });
 
-  contenuto += '<div class="footer">Viaggi d\'Autore · Claudio Incutto · <a href="https://wa.me/393407039861">WhatsApp</a></div>';
-  contenuto += '</body></html>';
+  const html = '<!DOCTYPE html><html lang="it"><head><meta charset="UTF-8"><title>Preventivo Viaggi d\'Autore<\/title>'
+    + '<style>'
+    + '@page{margin:20mm 18mm}'
+    + '*{box-sizing:border-box}'
+    + 'body{font-family:Segoe UI,Arial,sans-serif;color:#1a1a2e;font-size:12.5px;line-height:1.65;background:#fff}'
+    + '.hdr{display:flex;align-items:center;gap:12px;border-bottom:2px solid #d4922a;padding-bottom:12px;margin-bottom:18px}'
+    + '.htitle{font-size:19px;font-weight:700;color:#0a0f1e}'
+    + '.hsub{font-size:11px;color:#888;margin-top:2px}'
+    + '.msg{margin-bottom:10px;padding:10px 13px;border-radius:7px;page-break-inside:avoid}'
+    + '.bot{background:#f7f8fa;border-left:3px solid #d4922a}'
+    + '.user{background:#eef1f7;border-left:3px solid #0a0f1e}'
+    + '.label{font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px;color:#888}'
+    + '.mc{font-size:12px;color:#2d3748}'
+    + 'hr{border:none;border-top:1px solid #e5e7eb;margin:7px 0}'
+    + 'strong,b{font-weight:700;color:#0a0f1e}'
+    + 'ul{margin:4px 0 4px 16px;padding:0}'
+    + 'li{margin:2px 0}'
+    + '.footer{margin-top:30px;padding-top:10px;border-top:1px solid #eee;font-size:10.5px;color:#aaa;display:flex;justify-content:space-between}'
+    + '.wa{color:#25D366;font-weight:600;text-decoration:none}'
+    + '<\/style><\/head><body>'
+    + '<div class="hdr"><div style="font-size:26px">\u{1F9F3}<\/div>'
+    + '<div><div class="htitle">Preventivo Viaggi d\'Autore<\/div>'
+    + '<div class="hsub">Generato il ' + data + '<\/div><\/div><\/div>'
+    + righe
+    + '<div class="footer"><span>Viaggi d\'Autore \u00B7 Claudio Incutto<\/span>'
+    + '<a class="wa" href="https:\/\/wa.me\/393407039861">\u{1F4AC} WhatsApp +39 340 703 9861<\/a><\/div>'
+    + '<\/body><\/html>';
 
-  const blob = new Blob([contenuto], { type: 'text/html' });
+  const blob = new Blob([html], {type: 'text/html;charset=utf-8'});
   const url = URL.createObjectURL(blob);
-  const w = window.open(url, '_blank');
-  if (w) {
-    w.onload = function() { w.print(); };
-  }
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'preventivo-viaggi-autore.html';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
 }
 
 function formatRisposta(text) {

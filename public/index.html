@@ -1285,78 +1285,41 @@ function scaricaPDF() {
 }
 
 function formatRisposta(text) {
-  // Pulizia markdown: rimuove simboli Gemini/AI
-  text = text
-    // Grassetto **testo** → testo normale (verrà gestito come testo)
-    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-    // Corsivo *testo* o _testo_
-    .replace(/\*(.+?)\*/g, '<em>$1</em>')
-    .replace(/_(.+?)_/g, '<em>$1</em>')
-    // Titoli markdown ## Titolo → trattati come header
-    .replace(/^#{1,3}\s+/gm, '')
-    // Escape HTML (dopo aver processato markdown)
-    .replace(/&(?!amp;|lt;|gt;|strong|em)/g, '&amp;')
-    .replace(/<(?!\/?(?:strong|em|br))/g, '&lt;');
+  // Il testo arriva già con HTML da n8n/Gemini (<b>, <hr>, <strong>, * liste)
+  // Facciamo solo pulizia leggera senza rompere i tag esistenti
 
-  const lines = text.split(/\n/);
-  let html = '';
-  let inList = false;
+  // Converti voci lista markdown "* testo" in <li> HTML
+  text = text.replace(/^\* (.+)$/gm, '<li style="margin:2px 0;font-size:0.86rem;color:#374151;">$1</li>');
 
-  lines.forEach(line => {
-    line = line.trim();
-    if (!line) {
-      if (inList) { html += '</ul>'; inList = false; }
-      html += '<div style="height:6px"></div>';
-      return;
-    }
-
-    // Separatore
-    if (/^[-─—]{3,}$/.test(line)) {
-      if (inList) { html += '</ul>'; inList = false; }
-      html += '<hr style="border:none;border-top:1px solid #e5e7eb;margin:8px 0;">';
-      return;
-    }
-
-    // Header (tutto maiuscolo, o parole chiave viaggio)
-    const isHeader = /^[A-ZÀÈÉÌÒÙA-Z\s\/\-:0-9]{5,}$/.test(line) ||
-                     (line.endsWith(':') && line.length < 40 && !/</.test(line)) ||
-                     /^(TRENO|HOTEL|ITINERARIO|RISTORANTI|COSTO|VOLO|GIORNO|DAY|PARTENZA|ARRIVO|ANDATA|RITORNO)/i.test(line);
-    if (isHeader) {
-      if (inList) { html += '</ul>'; inList = false; }
-      html += `<div style="font-weight:700;color:#0a0f1e;margin-top:12px;margin-bottom:4px;font-size:0.86rem;letter-spacing:0.04em;border-left:2px solid #d4922a;padding-left:8px;">${line}</div>`;
-      return;
-    }
-
-    // Riga etichetta tipo "Partenza: Bologna"
-    if (/^(Partenza|Arrivo|Treno|Durata|Compagnia|Aereo|Volo|Hotel|Costo|Totale|Prezzo|Tariffa|Notte|EUR|€)/i.test(line) ||
-        /^[A-Za-zÀ-ÿ ]+:/.test(line)) {
-      if (inList) { html += '</ul>'; inList = false; }
-      const boldLine = line.replace(/^([^:]+):/, '<strong>$1:</strong>');
-      html += `<div style="margin:3px 0;font-size:0.86rem;color:#374151;padding-left:4px;">${boldLine}</div>`;
-      return;
-    }
-
-    // Lista con - o •
-    if (/^[-•*]\s/.test(line)) {
-      if (!inList) { html += '<ul style="margin:4px 0 4px 16px;padding:0;">'; inList = true; }
-      html += `<li style="margin:2px 0;font-size:0.86rem;color:#374151;">${line.replace(/^[-•*]\s/, '')}</li>`;
-      return;
-    }
-
-    // Numerato
-    if (/^\d+[.)]\s/.test(line) || /^Giorno \d+/i.test(line)) {
-      if (inList) { html += '</ul>'; inList = false; }
-      html += `<div style="margin:3px 0;font-size:0.86rem;color:#374151;padding-left:4px;">${line}</div>`;
-      return;
-    }
-
-    // Testo normale
-    if (inList) { html += '</ul>'; inList = false; }
-    html += `<div style="margin:3px 0;font-size:0.86rem;color:#374151;">${line}</div>`;
+  // Wrappa sequenze di <li> in <ul>
+  text = text.replace(/(<li[^>]*>.*?<\/li>\n?)+/gs, function(match) {
+    return '<ul style="margin:4px 0 4px 16px;padding:0;">' + match + '</ul>';
   });
 
-  if (inList) html += '</ul>';
-  return html;
+  // Stila i tag <b> che contengono titoli sezione (emoji + testo maiuscolo)
+  text = text.replace(/<b>(.*?)<\/b>/g, function(match, inner) {
+    const isTitolo = /[✈🏨🗓🍽💶🚂🌍📍⭐]/.test(inner) || /^[A-ZÀÈÉÌÒÙ\s:0-9]{3,}$/.test(inner.replace(/[✈🏨🗓🍽💶🚂🌍📍⭐\s]/g,''));
+    if (isTitolo) {
+      return `<div style="font-weight:700;color:#0a0f1e;margin-top:14px;margin-bottom:5px;font-size:0.88rem;letter-spacing:0.04em;border-left:2px solid #d4922a;padding-left:8px;">${inner}</div>`;
+    }
+    return `<strong>${inner}</strong>`;
+  });
+
+  // Stila i tag <strong> inline
+  // (già ok, niente da fare)
+
+  // Converti <hr> con stile
+  text = text.replace(/<hr>/g, '<hr style="border:none;border-top:1px solid #e5e7eb;margin:10px 0;">');
+
+  // Converti a capo in spaziatura
+  text = text.replace(/\n\n/g, '<div style="height:6px"></div>');
+  text = text.replace(/\n/g, '<br>');
+
+  // Rimuovi la frase "Scrivi SI VOGLIO SERVIZIO per procedere..."
+  text = text.replace(/Scrivi\s*<b>SI VOGLIO SERVIZIO<\/b>[^<]*/gi, '');
+  text = text.replace(/Scrivi SI VOGLIO SERVIZIO[^\n]*/gi, '');
+
+  return `<div style="font-size:0.87rem;color:#374151;line-height:1.7;">${text}</div>`;
 }
 
 async function inviaMsg() {

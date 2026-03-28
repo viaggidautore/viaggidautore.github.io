@@ -965,7 +965,7 @@ footer {
       </div>
 
       <div id="quickReplyWrap" class="quick-reply-wrap" style="display:none;">
-        <button class="quick-reply-btn" onclick="inviaQuickReply()">✅ SI VOGLIO SERVIZIO</button>
+        <button class="quick-reply-btn" onclick="scaricaPDF()">📄 Scarica il tuo preventivo PDF</button>
       </div>
 
       <div class="chat-input-area">
@@ -1247,14 +1247,57 @@ function showQuickReply() {
   document.getElementById('quickReplyWrap').style.display = 'block';
 }
 
-function inviaQuickReply() {
-  document.getElementById('quickReplyWrap').style.display = 'none';
-  document.getElementById('chatInput').value = 'SI VOGLIO SERVIZIO';
-  inviaMsg();
+function scaricaPDF() {
+  // Raccoglie tutto il testo della chat e genera un PDF stampabile
+  const msgs = document.getElementById('chatMessages');
+  const bubbles = msgs.querySelectorAll('.msg-bubble');
+  let contenuto = '<html><head><meta charset="UTF-8"><title>Preventivo Viaggi d\'Autore</title>';
+  contenuto += '<style>';
+  contenuto += 'body { font-family: Arial, sans-serif; max-width: 700px; margin: 40px auto; color: #1a1a2e; font-size: 13px; line-height: 1.6; }';
+  contenuto += 'h1 { color: #0a0f1e; font-size: 20px; border-bottom: 2px solid #d4922a; padding-bottom: 8px; margin-bottom: 20px; }';
+  contenuto += '.msg { margin-bottom: 12px; padding: 10px 14px; border-radius: 8px; }';
+  contenuto += '.bot { background: #f5f7fa; border-left: 3px solid #d4922a; }';
+  contenuto += '.user { background: #e8edf5; border-left: 3px solid #0a0f1e; text-align: right; }';
+  contenuto += '.label { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px; color: #6b7385; }';
+  contenuto += 'hr { border: none; border-top: 1px solid #e5e7eb; margin: 8px 0; }';
+  contenuto += '.footer { margin-top: 40px; font-size: 11px; color: #aaa; border-top: 1px solid #eee; padding-top: 12px; }';
+  contenuto += '</style></head><body>';
+  contenuto += '<h1>🧳 Preventivo Viaggi d\'Autore</h1>';
+  contenuto += '<p style="font-size:11px;color:#aaa;margin-bottom:20px;">Generato il ' + new Date().toLocaleDateString('it-IT', {day:'2-digit',month:'long',year:'numeric'}) + '</p>';
+
+  bubbles.forEach(b => {
+    const isUser = b.closest('.msg-user') !== null;
+    contenuto += `<div class="msg ${isUser ? 'user' : 'bot'}">`;
+    contenuto += `<div class="label">${isUser ? 'Tu' : 'Claudio · Viaggi d\'Autore'}</div>`;
+    contenuto += b.innerHTML;
+    contenuto += '</div>';
+  });
+
+  contenuto += '<div class="footer">Viaggi d\'Autore · Claudio Incutto · <a href="https://wa.me/393407039861">WhatsApp</a></div>';
+  contenuto += '</body></html>';
+
+  const blob = new Blob([contenuto], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  const w = window.open(url, '_blank');
+  if (w) {
+    w.onload = function() { w.print(); };
+  }
 }
 
 function formatRisposta(text) {
-  text = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  // Pulizia markdown: rimuove simboli Gemini/AI
+  text = text
+    // Grassetto **testo** → testo normale (verrà gestito come testo)
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    // Corsivo *testo* o _testo_
+    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+    .replace(/_(.+?)_/g, '<em>$1</em>')
+    // Titoli markdown ## Titolo → trattati come header
+    .replace(/^#{1,3}\s+/gm, '')
+    // Escape HTML (dopo aver processato markdown)
+    .replace(/&(?!amp;|lt;|gt;|strong|em)/g, '&amp;')
+    .replace(/<(?!\/?(?:strong|em|br))/g, '&lt;');
+
   const lines = text.split(/\n/);
   let html = '';
   let inList = false;
@@ -1266,19 +1309,25 @@ function formatRisposta(text) {
       html += '<div style="height:6px"></div>';
       return;
     }
+
+    // Separatore
     if (/^[-─—]{3,}$/.test(line)) {
       if (inList) { html += '</ul>'; inList = false; }
       html += '<hr style="border:none;border-top:1px solid #e5e7eb;margin:8px 0;">';
       return;
     }
+
+    // Header (tutto maiuscolo, o parole chiave viaggio)
     const isHeader = /^[A-ZÀÈÉÌÒÙA-Z\s\/\-:0-9]{5,}$/.test(line) ||
-                     (line.endsWith(':') && line.length < 40) ||
+                     (line.endsWith(':') && line.length < 40 && !/</.test(line)) ||
                      /^(TRENO|HOTEL|ITINERARIO|RISTORANTI|COSTO|VOLO|GIORNO|DAY|PARTENZA|ARRIVO|ANDATA|RITORNO)/i.test(line);
     if (isHeader) {
       if (inList) { html += '</ul>'; inList = false; }
       html += `<div style="font-weight:700;color:#0a0f1e;margin-top:12px;margin-bottom:4px;font-size:0.86rem;letter-spacing:0.04em;border-left:2px solid #d4922a;padding-left:8px;">${line}</div>`;
       return;
     }
+
+    // Riga etichetta tipo "Partenza: Bologna"
     if (/^(Partenza|Arrivo|Treno|Durata|Compagnia|Aereo|Volo|Hotel|Costo|Totale|Prezzo|Tariffa|Notte|EUR|€)/i.test(line) ||
         /^[A-Za-zÀ-ÿ ]+:/.test(line)) {
       if (inList) { html += '</ul>'; inList = false; }
@@ -1286,16 +1335,22 @@ function formatRisposta(text) {
       html += `<div style="margin:3px 0;font-size:0.86rem;color:#374151;padding-left:4px;">${boldLine}</div>`;
       return;
     }
+
+    // Lista con - o •
     if (/^[-•*]\s/.test(line)) {
       if (!inList) { html += '<ul style="margin:4px 0 4px 16px;padding:0;">'; inList = true; }
       html += `<li style="margin:2px 0;font-size:0.86rem;color:#374151;">${line.replace(/^[-•*]\s/, '')}</li>`;
       return;
     }
+
+    // Numerato
     if (/^\d+[.)]\s/.test(line) || /^Giorno \d+/i.test(line)) {
       if (inList) { html += '</ul>'; inList = false; }
       html += `<div style="margin:3px 0;font-size:0.86rem;color:#374151;padding-left:4px;">${line}</div>`;
       return;
     }
+
+    // Testo normale
     if (inList) { html += '</ul>'; inList = false; }
     html += `<div style="margin:3px 0;font-size:0.86rem;color:#374151;">${line}</div>`;
   });
@@ -1343,7 +1398,11 @@ async function inviaMsg() {
     typing.remove();
     if (data.risposta) {
       addMsg(formatRisposta(data.risposta), false);
-      if (data.risposta.includes('SI VOGLIO SERVIZIO')) showQuickReply();
+      // Mostra pulsante PDF quando arriva un preventivo completo
+      const r = data.risposta.toLowerCase();
+      if (r.includes('volo') || r.includes('hotel') || r.includes('preventivo') || r.includes('totale') || r.includes('itinerario')) {
+        showQuickReply();
+      }
       segnaSimUsata();
     } else {
       addMsg('Mi dispiace, si è verificato un errore. Riprova tra poco.', false);

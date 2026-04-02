@@ -323,6 +323,88 @@ nav {
   gap: 10px;
   background: #f8f9fb;
 }
+/* Hotel card styles inside chat bubbles */
+.hotel-card {
+  background: #f8f9fb;
+  border: 1px solid #e8eaf0;
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin: 8px 0;
+  position: relative;
+}
+.hotel-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.hotel-card-name {
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: #0a0f1e;
+}
+.hotel-card-stars {
+  color: #d4922a;
+  font-size: 0.75rem;
+  flex-shrink: 0;
+}
+.hotel-card-price {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #d4922a;
+}
+.hotel-card-detail {
+  font-size: 0.78rem;
+  color: #6b7385;
+  line-height: 1.5;
+}
+.hotel-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: rgba(212,146,42,0.1);
+  border: 1px solid rgba(212,146,42,0.2);
+  color: #92650e;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 4px;
+  letter-spacing: 0.04em;
+}
+
+/* Flight row style */
+.flight-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: #f8f9fb;
+  border: 1px solid #e8eaf0;
+  border-radius: 8px;
+  margin: 5px 0;
+  font-size: 0.85rem;
+}
+.flight-route {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+  color: #0a0f1e;
+  flex: 1;
+}
+.flight-arrow { color: #d4922a; font-size: 1rem; }
+.flight-times { color: #6b7385; font-size: 0.8rem; }
+.flight-duration {
+  background: #e8eaf0;
+  border-radius: 4px;
+  padding: 2px 7px;
+  font-size: 0.75rem;
+  color: #4b5563;
+  font-weight: 600;
+}
+.flight-airline { font-size: 0.75rem; color: #9ca3af; flex-shrink: 0; }
+
 .chat-messages::-webkit-scrollbar { width: 3px; }
 .chat-messages::-webkit-scrollbar-track { background: transparent; }
 .chat-messages::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 4px; }
@@ -386,6 +468,57 @@ nav {
 
 /* Quick reply */
 .quick-reply-wrap { padding: 0 16px 12px; background: #f8f9fb; }
+
+/* Suggest buttons */
+.suggest-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  background: var(--white);
+  border: 1.5px solid #e8eaf0;
+  border-radius: 9px;
+  padding: 10px 14px;
+  margin-bottom: 7px;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  transition: all 0.18s;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+.suggest-btn:hover {
+  border-color: var(--amber);
+  background: rgba(212,146,42,0.04);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(212,146,42,0.12);
+}
+.suggest-btn:last-child { margin-bottom: 0; }
+.btn-emoji {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+  width: 28px;
+  text-align: center;
+}
+.btn-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+.btn-title {
+  font-size: 0.83rem;
+  font-weight: 600;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.btn-sub {
+  font-size: 0.73rem;
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
 .quick-reply-btn {
   background: linear-gradient(135deg, var(--ink) 0%, var(--ink-soft) 100%);
   color: white;
@@ -1342,40 +1475,55 @@ function scaricaPDF() {
 
 function formatRisposta(text) {
   // Il testo arriva già con HTML da n8n/Gemini (<b>, <hr>, <strong>, * liste)
-  // Facciamo solo pulizia leggera senza rompere i tag esistenti
 
-  // Converti voci lista markdown "* testo" in <li> HTML
-  text = text.replace(/^\* (.+)$/gm, '<li style="margin:2px 0;font-size:0.86rem;color:#374151;">$1</li>');
+  // ── 1. ABBREVIA NOMI AEROPORTO ──────────────────────────────────────────
+  // Pattern: "Aeroporto di Città Nome Lungo" → "Città"
+  text = text.replace(/Aeroporto(?:\s+(?:Internazionale|Civile|di|del|della|degli|dello|dei))?\s+(?:di\s+)?([A-ZÀ-Ú][a-zà-ú]+(?:\s+[A-ZÀ-Ú][a-zà-ú]+)?)/g, '$1');
+  // Pattern inglese: "X International Airport" → "X"
+  text = text.replace(/([A-ZÀ-Ú][a-zà-ú]+(?:\s+[A-ZÀ-Ú][a-zà-ú]+)?)\s+(?:International\s+)?Airport/g, '$1');
 
-  // Wrappa sequenze di <li> in <ul>
-  text = text.replace(/(<li[^>]*>.*?<\/li>\n?)+/gs, function(match) {
-    return '<ul style="margin:4px 0 4px 16px;padding:0;">' + match + '</ul>';
-  });
+  // ── 1b. TRASFORMA RIGHE VOLO in flight-row ───────────────────────────────
+  // Pattern atteso da n8n: "✈️ ANDATA | Compagnia | CittàA - CittàB | 09:10 - 11:20 | 2h 10m | €89"
+  // oppure semplicemente "CittàA - CittàB 09:10-11:20 (2h 10m)"
+  text = text.replace(/([A-ZÀ-Ú][a-zà-ú\s]+?)\s*[→\-–]\s*([A-ZÀ-Ú][a-zà-ú\s]+?)\s+(\d{1,2}[:.]\d{2})\s*[-–]\s*(\d{1,2}[:.]\d{2})\s*\(([^)]+)\)/g,
+    function(m, cA, cB, t1, t2, dur) {
+      return `<div class="flight-row"><span class="flight-route">${cA.trim()} <span class="flight-arrow">→</span> ${cB.trim()}</span><span class="flight-times">${t1} – ${t2}</span><span class="flight-duration">${dur}</span></div>`;
+    });
 
-  // Stila i tag <b> che contengono titoli sezione (emoji + testo maiuscolo)
+  // ── 1c. STILA PREZZI HOTEL ───────────────────────────────────────────────
+  // Aggiunge badge colorato ai prezzi tipo "€120/notte" o "120€ a notte"
+  text = text.replace(/(€\s*\d+[\d.,]*)\s*(?:\/\s*notte|a\s+notte|per\s+notte)/gi,
+    '<span style="font-weight:700;color:#d4922a;">$1/notte</span>');
+
+  // ── 2. STILA TAG <b> CON TITOLI SEZIONE ──────────────────────────────────
   text = text.replace(/<b>(.*?)<\/b>/g, function(match, inner) {
-    const isTitolo = /[✈🏨🗓🍽💶🚂🌍📍⭐]/.test(inner) || /^[A-ZÀÈÉÌÒÙ\s:0-9]{3,}$/.test(inner.replace(/[✈🏨🗓🍽💶🚂🌍📍⭐\s]/g,''));
+    const isTitolo = /[✈🏨🗓🍽💶🚂🌍📍⭐🔑🌟💺🛏]/.test(inner) || /^[A-ZÀÈÉÌÒÙ\s:0-9]{3,}$/.test(inner.replace(/[✈🏨🗓🍽💶🚂🌍📍⭐🔑🌟💺🛏\s]/g,''));
     if (isTitolo) {
-      return `<div style="font-weight:700;color:#0a0f1e;margin-top:14px;margin-bottom:5px;font-size:0.88rem;letter-spacing:0.04em;border-left:2px solid #d4922a;padding-left:8px;">${inner}</div>`;
+      return `<div style="font-weight:700;color:#0a0f1e;margin-top:16px;margin-bottom:6px;font-size:0.9rem;letter-spacing:0.04em;border-left:3px solid #d4922a;padding-left:9px;background:rgba(212,146,42,0.05);padding:6px 9px;border-radius:0 6px 6px 0;">${inner}</div>`;
     }
-    return `<strong>${inner}</strong>`;
+    return `<strong style="font-weight:600;color:#0a0f1e;">${inner}</strong>`;
   });
 
-  // Stila i tag <strong> inline
-  // (già ok, niente da fare)
+  // ── 3. (volo inline già gestito sopra con flight-row) ───────────────────
 
-  // Converti <hr> con stile
-  text = text.replace(/<hr>/g, '<hr style="border:none;border-top:1px solid #e5e7eb;margin:10px 0;">');
+  // ── 4. CONVERTI LISTE MARKDOWN ──────────────────────────────────────────
+  text = text.replace(/^\* (.+)$/gm, '<li style="margin:3px 0;font-size:0.86rem;color:#374151;padding-left:2px;">$1</li>');
+  text = text.replace(/(<li[^>]*>.*?<\/li>\n?)+/gs, function(match) {
+    return '<ul style="margin:6px 0 6px 18px;padding:0;">' + match + '</ul>';
+  });
 
-  // Converti a capo in spaziatura
-  text = text.replace(/\n\n/g, '<div style="height:6px"></div>');
+  // ── 5. STILA <hr> ────────────────────────────────────────────────────────
+  text = text.replace(/<hr>/g, '<div style="border:none;border-top:1.5px solid #e5e7eb;margin:14px 0;"></div>');
+
+  // ── 6. CONVERTI A CAPO ──────────────────────────────────────────────────
+  text = text.replace(/\n\n/g, '<div style="height:7px"></div>');
   text = text.replace(/\n/g, '<br>');
 
-  // Rimuovi la frase "Scrivi SI VOGLIO SERVIZIO per procedere..."
+  // ── 7. PULISCI FRASI INDESIDERATE ───────────────────────────────────────
   text = text.replace(/Scrivi\s*<b>SI VOGLIO SERVIZIO<\/b>[^<]*/gi, '');
   text = text.replace(/Scrivi SI VOGLIO SERVIZIO[^\n]*/gi, '');
 
-  return `<div style="font-size:0.87rem;color:#374151;line-height:1.7;">${text}</div>`;
+  return `<div style="font-size:0.87rem;color:#374151;line-height:1.75;">${text}</div>`;
 }
 
 async function inviaMsg() {

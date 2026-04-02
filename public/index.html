@@ -1474,54 +1474,132 @@ function scaricaPDF() {
 }
 
 function formatRisposta(text) {
-  // Il testo arriva già con HTML da n8n/Gemini (<b>, <hr>, <strong>, * liste)
+  // Testo in arrivo da n8n (plain text con emoji, newline, nessun HTML)
+  // Esempio reale: "Andata: Ryanair | Bologna Guglielmo Marconi → Humberto Delgado | 14:45 → 16:55 (3h 10m)"
 
-  // ── 1. ABBREVIA NOMI AEROPORTO ──────────────────────────────────────────
-  // Pattern: "Aeroporto di Città Nome Lungo" → "Città"
-  text = text.replace(/Aeroporto(?:\s+(?:Internazionale|Civile|di|del|della|degli|dello|dei))?\s+(?:di\s+)?([A-ZÀ-Ú][a-zà-ú]+(?:\s+[A-ZÀ-Ú][a-zà-ú]+)?)/g, '$1');
-  // Pattern inglese: "X International Airport" → "X"
-  text = text.replace(/([A-ZÀ-Ú][a-zà-ú]+(?:\s+[A-ZÀ-Ú][a-zà-ú]+)?)\s+(?:International\s+)?Airport/g, '$1');
+  // ── 1. ESCAPE HTML (il testo arriva plain, non HTML) ─────────────────────
+  // Solo se non contiene già tag HTML (retrocompatibilità)
+  const hasHTML = /<[a-z][\s\S]*>/i.test(text);
 
-  // ── 1b. TRASFORMA RIGHE VOLO in flight-row ───────────────────────────────
-  // Pattern atteso da n8n: "✈️ ANDATA | Compagnia | CittàA - CittàB | 09:10 - 11:20 | 2h 10m | €89"
-  // oppure semplicemente "CittàA - CittàB 09:10-11:20 (2h 10m)"
-  text = text.replace(/([A-ZÀ-Ú][a-zà-ú\s]+?)\s*[→\-–]\s*([A-ZÀ-Ú][a-zà-ú\s]+?)\s+(\d{1,2}[:.]\d{2})\s*[-–]\s*(\d{1,2}[:.]\d{2})\s*\(([^)]+)\)/g,
-    function(m, cA, cB, t1, t2, dur) {
-      return `<div class="flight-row"><span class="flight-route">${cA.trim()} <span class="flight-arrow">→</span> ${cB.trim()}</span><span class="flight-times">${t1} – ${t2}</span><span class="flight-duration">${dur}</span></div>`;
+  if (!hasHTML) {
+    text = text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  }
+
+  // ── 2. TITOLI SEZIONE con emoji ──────────────────────────────────────────
+  // Pattern: riga che inizia con emoji e testo maiuscolo (es: "✈️ VOLI — 3 OPZIONI")
+  text = text.replace(/^((?:✈️|🏨|🗓|💰|⭐|⚡|🛏|🏠|🌍|📍|💶|🍽|🔑|🌟|💺|🎯|📋)[^\n]+)$/gm, function(m, line) {
+    return `<div style="font-weight:700;color:#0a0f1e;margin-top:18px;margin-bottom:8px;font-size:0.92rem;letter-spacing:0.03em;display:flex;align-items:center;gap:8px;border-left:3px solid #d4922a;padding:6px 10px;background:rgba(212,146,42,0.06);border-radius:0 7px 7px 0;">${line}</div>`;
+  });
+
+  // ── 3. SOTTO-TITOLI OPZIONE VOLO (💰 ECONOMICA — 436 EUR A/R) ────────────
+  text = text.replace(/^((?:💰|⚡|⭐)\s+[A-ZÀÈÉÌÒÙ][^\n]+(?:EUR|€)[^\n]*)$/gm, function(m, line) {
+    return `<div style="font-weight:700;color:#0a0f1e;margin-top:14px;margin-bottom:4px;font-size:0.87rem;display:flex;align-items:center;gap:6px;">${line}</div>`;
+  });
+
+  // ── 4. RIGHE VOLO ────────────────────────────────────────────────────────
+  // Pattern reale: "Andata: Ryanair | Bologna Guglielmo Marconi → Humberto Delgado | 14:45 → 16:55 (3h 10m)"
+  // oppure:        "Ritorno: Tap Air Portugal | ... | 13:00 → 16:55 (2h 55m)"
+  text = text.replace(/^(Andata|Ritorno):\s*([^|]+)\|\s*([^|→]+?)\s*→\s*([^|]+?)\s*\|\s*(\d{1,2}:\d{2})\s*→\s*(\d{1,2}:\d{2})\s*\(([^)]+)\)$/gm,
+    function(m, dir, airline, orig, dest, t1, t2, dur) {
+      // Abbrevia nomi aeroporto: prendi solo la prima parola significativa
+      const abbrev = (name) => {
+        name = name.trim();
+        // Rimuovi "Aeroporto ... di", "... International", ecc.
+        name = name.replace(/Aeroporto(?:\s+(?:Internazionale|Civile|Guglielmo\s+Marconi|di|del|della|degli|dello|dei|e\s+\w+))*\s*/gi, '');
+        name = name.replace(/\s*(?:International|Airport|Airports?)\s*/gi, '');
+        name = name.replace(/^(?:di|del|della|degli|dello|dei)\s+/gi, '');
+        // Nomi noti → codice breve
+        const map = {
+          'Bologna Guglielmo Marconi': 'Bologna (BLQ)',
+          'Humberto Delgado': 'Lisbona (LIS)',
+          'Malpensa': 'Milano (MXP)',
+          'Fiumicino': 'Roma (FCO)',
+          'Ciampino': 'Roma (CIA)',
+          'Charles de Gaulle': 'Parigi (CDG)',
+          'Heathrow': 'Londra (LHR)',
+          'Gatwick': 'Londra (LGW)',
+          'El Prat': 'Barcellona (BCN)',
+          'Adolfo Suárez Barajas': 'Madrid (MAD)',
+          'Schiphol': 'Amsterdam (AMS)',
+          'Tegel': 'Berlino (TXL)',
+          'Brandenburg': 'Berlino (BER)',
+        };
+        for (const [k,v] of Object.entries(map)) {
+          if (name.includes(k)) return v;
+        }
+        return name.trim();
+      };
+      const origShort = abbrev(orig);
+      const destShort = abbrev(dest);
+      const dirLabel = dir === 'Andata'
+        ? '<span style="color:#d4922a;font-weight:700;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.06em;">↗ ANDATA</span>'
+        : '<span style="color:#6b7385;font-weight:700;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.06em;">↙ RITORNO</span>';
+      return `<div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:#f8f9fb;border:1px solid #e8eaf0;border-radius:8px;margin:4px 0;font-size:0.83rem;flex-wrap:wrap;">
+        ${dirLabel}
+        <span style="font-size:0.75rem;color:#9ca3af;">${airline.trim()}</span>
+        <span style="font-weight:700;color:#0a0f1e;flex:1;white-space:nowrap;">${origShort} <span style="color:#d4922a;">→</span> ${destShort}</span>
+        <span style="color:#6b7385;">${t1} – ${t2}</span>
+        <span style="background:#e8eaf0;border-radius:4px;padding:1px 7px;font-size:0.76rem;color:#374151;font-weight:600;">${dur}</span>
+      </div>`;
     });
 
-  // ── 1c. STILA PREZZI HOTEL ───────────────────────────────────────────────
-  // Aggiunge badge colorato ai prezzi tipo "€120/notte" o "120€ a notte"
-  text = text.replace(/(€\s*\d+[\d.,]*)\s*(?:\/\s*notte|a\s+notte|per\s+notte)/gi,
-    '<span style="font-weight:700;color:#d4922a;">$1/notte</span>');
+  // ── 5. RIGHE HOTEL ───────────────────────────────────────────────────────
+  // Pattern: "Nome Hotel | 3 ★ | Rating: 8.9/5" oppure "Nome Hotel | Rating: 8.2/5"
+  // Seguito su riga successiva da "Prezzo: 249 EUR/notte | Totale 5 notti: 1247 EUR"
+  text = text.replace(/^([^\n|]+?)\s*\|\s*(?:(\d)\s*★\s*\|)?\s*Rating:\s*([\d.]+)\/5\n(?:Prezzo:\s*([\d.]+)\s*EUR\/notte\s*\|\s*Totale\s*(\d+)\s*notti:\s*([\d.]+)\s*EUR)?/gm,
+    function(m, nome, stelle, rating, prezzo, notti, totale) {
+      const starsHtml = stelle ? `<span style="color:#d4922a;font-size:0.8rem;">${'★'.repeat(parseInt(stelle))}</span>` : '';
+      const ratingBadge = `<span style="background:${parseFloat(rating)>=9?'#dcfce7':parseFloat(rating)>=8?'#fef9c3':'#f3f4f6'};color:${parseFloat(rating)>=9?'#166534':parseFloat(rating)>=8?'#854d0e':'#374151'};border-radius:4px;padding:1px 6px;font-size:0.75rem;font-weight:700;">★ ${rating}</span>`;
+      const prezzoHtml = prezzo ? `<span style="font-weight:700;color:#d4922a;font-size:0.88rem;">€${prezzo}/notte</span>` : '';
+      const totaleHtml = totale && notti ? `<span style="font-size:0.76rem;color:#6b7385;">Totale ${notti} notti: <strong>€${totale}</strong></span>` : '';
+      return `<div style="background:#f8f9fb;border:1px solid #e8eaf0;border-radius:9px;padding:10px 13px;margin:6px 0;">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:4px;">
+          <span style="font-weight:700;font-size:0.87rem;color:#0a0f1e;">${nome.trim()} ${starsHtml}</span>
+          ${ratingBadge}
+        </div>
+        <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+          ${prezzoHtml}${totaleHtml}
+        </div>
+      </div>`;
+    });
 
-  // ── 2. STILA TAG <b> CON TITOLI SEZIONE ──────────────────────────────────
-  text = text.replace(/<b>(.*?)<\/b>/g, function(match, inner) {
-    const isTitolo = /[✈🏨🗓🍽💶🚂🌍📍⭐🔑🌟💺🛏]/.test(inner) || /^[A-ZÀÈÉÌÒÙ\s:0-9]{3,}$/.test(inner.replace(/[✈🏨🗓🍽💶🚂🌍📍⭐🔑🌟💺🛏\s]/g,''));
-    if (isTitolo) {
-      return `<div style="font-weight:700;color:#0a0f1e;margin-top:16px;margin-bottom:6px;font-size:0.9rem;letter-spacing:0.04em;border-left:3px solid #d4922a;padding-left:9px;background:rgba(212,146,42,0.05);padding:6px 9px;border-radius:0 6px 6px 0;">${inner}</div>`;
-    }
-    return `<strong style="font-weight:600;color:#0a0f1e;">${inner}</strong>`;
-  });
+  // ── 6. TIPO ALLOGGIO (🛏 BED & BREAKFAST ecc.) ──────────────────────────
+  text = text.replace(/^(🛏\s*BED &amp; BREAKFAST|🏨\s*HOTEL|🏠\s*APPARTAMENTO)$/gm,
+    '<div style="font-size:0.75rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#6b7385;margin-top:12px;margin-bottom:2px;">$1</div>');
 
-  // ── 3. (volo inline già gestito sopra con flight-row) ───────────────────
+  // ── 7. GIORNI ITINERARIO ─────────────────────────────────────────────────
+  text = text.replace(/^(GIORNO\s+\d+\s*\([^)]+\)\s*[-–—]\s*.+)$/gm,
+    '<div style="font-weight:700;color:#0a0f1e;font-size:0.88rem;margin-top:14px;margin-bottom:5px;padding:5px 10px;background:#f1f5f9;border-radius:6px;">📅 $1</div>');
 
-  // ── 4. CONVERTI LISTE MARKDOWN ──────────────────────────────────────────
-  text = text.replace(/^\* (.+)$/gm, '<li style="margin:3px 0;font-size:0.86rem;color:#374151;padding-left:2px;">$1</li>');
-  text = text.replace(/(<li[^>]*>.*?<\/li>\n?)+/gs, function(match) {
-    return '<ul style="margin:6px 0 6px 18px;padding:0;">' + match + '</ul>';
-  });
+  // ── 8. LABEL Mattina / Pomeriggio / Sera ─────────────────────────────────
+  text = text.replace(/^(Mattina|Pomeriggio|Sera):\s*/gm,
+    '<span style="font-weight:700;color:#d4922a;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.05em;">$1 · </span>');
 
-  // ── 5. STILA <hr> ────────────────────────────────────────────────────────
-  text = text.replace(/<hr>/g, '<div style="border:none;border-top:1.5px solid #e5e7eb;margin:14px 0;"></div>');
+  // ── 9. STILA TAG <b> (retrocompatibilità HTML da n8n) ────────────────────
+  if (hasHTML) {
+    text = text.replace(/<b>(.*?)<\/b>/g, function(match, inner) {
+      const isTitolo = /[✈🏨🗓🍽💶🚂🌍📍⭐🔑🌟💺🛏]/.test(inner) || /^[A-ZÀÈÉÌÒÙ\s:0-9—]{3,}$/.test(inner.replace(/[✈🏨🗓🍽💶🚂🌍📍⭐🔑🌟💺🛏\s—]/g,''));
+      if (isTitolo) {
+        return `<div style="font-weight:700;color:#0a0f1e;margin-top:16px;margin-bottom:6px;font-size:0.9rem;border-left:3px solid #d4922a;padding:6px 10px;background:rgba(212,146,42,0.06);border-radius:0 7px 7px 0;">${inner}</div>`;
+      }
+      return `<strong style="font-weight:600;">${inner}</strong>`;
+    });
+    text = text.replace(/<hr>/g, '<div style="border-top:1.5px solid #e5e7eb;margin:14px 0;"></div>');
+  }
 
-  // ── 6. CONVERTI A CAPO ──────────────────────────────────────────────────
-  text = text.replace(/\n\n/g, '<div style="height:7px"></div>');
+  // ── 10. CONVERTI LISTE MARKDOWN ──────────────────────────────────────────
+  text = text.replace(/^\* (.+)$/gm, '<li style="margin:3px 0;font-size:0.86rem;color:#374151;">$1</li>');
+  text = text.replace(/(<li[^>]*>.*?<\/li>\n?)+/gs, m => '<ul style="margin:6px 0 6px 18px;padding:0;">' + m + '</ul>');
+
+  // ── 11. A CAPO ───────────────────────────────────────────────────────────
+  text = text.replace(/\n\n/g, '<div style="height:8px"></div>');
   text = text.replace(/\n/g, '<br>');
 
-  // ── 7. PULISCI FRASI INDESIDERATE ───────────────────────────────────────
-  text = text.replace(/Scrivi\s*<b>SI VOGLIO SERVIZIO<\/b>[^<]*/gi, '');
-  text = text.replace(/Scrivi SI VOGLIO SERVIZIO[^\n]*/gi, '');
+  // ── 12. PULIZIA FINALE ───────────────────────────────────────────────────
+  text = text.replace(/Scrivi\s*(?:&lt;b&gt;|<b>)?SI VOGLIO SERVIZIO(?:&lt;\/b&gt;|<\/b>)?[^\n<]*/gi, '');
 
   return `<div style="font-size:0.87rem;color:#374151;line-height:1.75;">${text}</div>`;
 }

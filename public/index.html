@@ -973,10 +973,28 @@ Cosa preferisci? 👇</div>
       </div>
 
       <div id="suggestWrap" class="quick-reply-wrap" style="display:block;">
-        <div style="display:flex;gap:8px;flex-wrap:wrap;padding:4px 0;">
-          <button class="suggest-btn" onclick="usaSuggerimento('Ho una destinazione in mente')">✈️ Ho una meta</button>
-          <button class="suggest-btn" onclick="usaSuggerimento('Dove posso andare con 50 euro da Bologna?')">💡 Ispirami</button>
-          <button class="suggest-btn" onclick="usaSuggerimento('Offerte voli economici questo weekend da Bologna')">💰 Offerte</button>
+        <div>
+          <button class="suggest-btn" onclick="usaSuggerimento('Ho una destinazione in mente')">
+            <span class="btn-emoji">✈️</span>
+            <span class="btn-text">
+              <span class="btn-title">Ho una destinazione in mente</span>
+              <span class="btn-sub">Dimmi dove vuoi andare e le date</span>
+            </span>
+          </button>
+          <button class="suggest-btn" onclick="usaSuggerimento('Dove posso andare con 50 euro da Bologna?')">
+            <span class="btn-emoji">💡</span>
+            <span class="btn-text">
+              <span class="btn-title">Ispirami — non so dove andare</span>
+              <span class="btn-sub">Trova le mete più economiche per me</span>
+            </span>
+          </button>
+          <button class="suggest-btn" onclick="usaSuggerimento('Offerte voli economici questo weekend da Bologna')">
+            <span class="btn-emoji">💰</span>
+            <span class="btn-text">
+              <span class="btn-title">Cerca offerte del momento</span>
+              <span class="btn-sub">Voli low cost in partenza da Bologna</span>
+            </span>
+          </button>
         </div>
       </div>
       <div id="quickReplyWrap" class="quick-reply-wrap" style="display:none;">

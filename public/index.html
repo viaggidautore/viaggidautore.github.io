@@ -241,7 +241,7 @@ nav {
 }
 
 .chat-card {
-  background: var(--white);
+  background: #ffffff;
   border-radius: 16px;
   overflow: hidden;
   box-shadow: 
@@ -315,14 +315,13 @@ nav {
 /* Chat messages */
 .chat-messages {
   padding: 20px 16px 12px;
-  min-height: 160px;
-  max-height: 620px;
+  min-height: 220px;
+  max-height: 520px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 10px;
-  background: linear-gradient(160deg, #0d1425 0%, #111c32 100%);
-  scroll-behavior: smooth;
+  background: #ffffff;
 }
 /* Hotel card styles inside chat bubbles */
 .hotel-card {
@@ -408,7 +407,7 @@ nav {
 
 .chat-messages::-webkit-scrollbar { width: 3px; }
 .chat-messages::-webkit-scrollbar-track { background: transparent; }
-.chat-messages::-webkit-scrollbar-thumb { background: rgba(212,146,42,0.3); border-radius: 4px; }
+.chat-messages::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 4px; }
 
 .msg-row { display: flex; gap: 8px; align-items: flex-end; }
 .msg-av {
@@ -422,21 +421,21 @@ nav {
 .msg-av img { width: 100%; height: 100%; object-fit: cover; }
 
 .msg-bubble {
-  max-width: 85%;
+  max-width: 82%;
   padding: 11px 15px;
   border-radius: 12px 12px 12px 4px;
-  background: rgba(255,255,255,0.08);
-  color: #e8edf5;
+  background: #ffffff;
+  color: #1a1f2e;
   font-size: 0.87rem;
   line-height: 1.65;
-  box-shadow: 0 1px 6px rgba(0,0,0,0.4);
-  border: 1px solid rgba(255,255,255,0.1);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.07), 0 4px 12px rgba(0,0,0,0.05);
+  border: 1px solid #e8eaf0;
 }
 
 .msg-user { flex-direction: row-reverse; }
 .msg-user .msg-bubble {
-  background: linear-gradient(135deg, var(--ink) 0%, var(--ink-soft) 100%);
-  color: #fff;
+  background: linear-gradient(135deg, #0a0f1e 0%, #1e2a45 100%);
+  color: #ffffff;
   border-radius: 12px 12px 4px 12px;
   border: none;
   box-shadow: 0 2px 8px rgba(10,15,30,0.25), 0 6px 20px rgba(10,15,30,0.15);
@@ -447,11 +446,11 @@ nav {
   gap: 4px;
   padding: 13px 16px;
   align-items: center;
-  background: var(--white);
+  background: #ffffff;
   border-radius: 12px 12px 12px 4px;
   width: fit-content;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
-  border: 1px solid rgba(0,0,0,0.06);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+  border: 1px solid #e8eaf0;
 }
 .msg-typing span {
   width: 5px; height: 5px;
@@ -468,7 +467,7 @@ nav {
 }
 
 /* Quick reply */
-.quick-reply-wrap { padding: 0 16px 12px; background: linear-gradient(160deg, #0d1425 0%, #111c32 100%); }
+.quick-reply-wrap { padding: 0 16px 12px; background: #ffffff; }
 
 /* Suggest buttons */
 .suggest-btn {
@@ -476,8 +475,8 @@ nav {
   align-items: center;
   gap: 10px;
   width: 100%;
-  background: rgba(255,255,255,0.06);
-  border: 1.5px solid rgba(212,146,42,0.25);
+  background: #f8f9fb;
+  border: 1.5px solid #e8eaf0;
   border-radius: 9px;
   padding: 10px 14px;
   margin-bottom: 7px;
@@ -485,13 +484,13 @@ nav {
   font-family: inherit;
   text-align: left;
   transition: all 0.18s;
-  box-shadow: none;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
 }
 .suggest-btn:hover {
   border-color: var(--amber);
-  background: rgba(212,146,42,0.12);
+  background: rgba(212,146,42,0.04);
   transform: translateY(-1px);
-  box-shadow: 0 3px 10px rgba(212,146,42,0.15);
+  box-shadow: 0 3px 10px rgba(212,146,42,0.12);
 }
 .suggest-btn:last-child { margin-bottom: 0; }
 .btn-emoji {
@@ -509,14 +508,14 @@ nav {
 .btn-title {
   font-size: 0.83rem;
   font-weight: 600;
-  color: #e8edf5;
+  color: var(--ink);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 .btn-sub {
   font-size: 0.73rem;
-  color: rgba(255,255,255,0.5);
+  color: var(--text-muted);
   font-weight: 400;
 }
 
@@ -542,28 +541,28 @@ nav {
   display: flex;
   gap: 10px;
   padding: 12px 14px;
-  border-top: 1px solid rgba(212,146,42,0.15);
-  background: #0a0f1e;
+  border-top: 1px solid #e8eaf0;
+  background: #ffffff;
   align-items: center;
 }
 .chat-input {
   flex: 1;
-  border: 1.5px solid rgba(212,146,42,0.3);
+  border: 1.5px solid #e8eaf0;
   border-radius: 8px;
   padding: 11px 16px;
   font-family: inherit;
   font-size: 0.87rem;
-  color: #e8edf5;
-  background: rgba(255,255,255,0.07);
+  color: var(--text);
+  background: #f8f9fb;
   outline: none;
   transition: all 0.2s;
 }
 .chat-input:focus {
-  border-color: var(--amber);
-  background: rgba(255,255,255,0.1);
-  box-shadow: 0 0 0 3px rgba(212,146,42,0.12);
+  border-color: var(--ink);
+  background: white;
+  box-shadow: 0 0 0 3px rgba(10,15,30,0.06);
 }
-.chat-input::placeholder { color: rgba(255,255,255,0.35); }
+.chat-input::placeholder { color: #a0a8b8; }
 
 .chat-send {
   width: 42px;
@@ -589,11 +588,10 @@ nav {
 
 .chat-hint {
   text-align: center;
-  padding: 8px 16px 10px;
+  padding: 8px 16px 4px;
   font-size: 0.72rem;
   color: rgba(255,255,255,0.35);
   letter-spacing: 0.03em;
-  background: #0a0f1e;
 }
 .chat-hint strong { color: var(--amber-light); font-weight: 600; }
 
@@ -1137,7 +1135,7 @@ Cosa preferisci? 👇</div>
       </div>
 
       <div class="chat-input-area">
-        <input class="chat-input" id="chatInput" type="text" placeholder="✈️ Dove vuoi andare, quando e quante persone…" autocomplete="off">
+        <input class="chat-input" id="chatInput" type="text" placeholder="✈️ Dove vuoi andare, quando e quante persone…" autocomplete="off" maxlength="500">
         <button class="chat-send" id="chatSend" onclick="inviaMsg()">
           <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
         </button>
@@ -1543,14 +1541,14 @@ function formatRisposta(text) {
 
   // ── 1. TITOLI PRINCIPALI CON EMOJI ────────────────────────────────────
   text = text.replace(/^((?:✈️|🏨|🗓|💰|⭐|⚡|🌍|📍|💶|🍽|🔑|🌟|💺|🎯|📋)[^\n]+)$/gm,
-    '<div style="font-weight:700;color:#f0e8d5;margin-top:20px;margin-bottom:10px;font-size:0.93rem;display:flex;align-items:center;gap:8px;border-left:3px solid #d4922a;padding:7px 11px;background:rgba(212,146,42,0.15);border-radius:0 8px 8px 0;">$1</div>');
+    '<div style="font-weight:700;color:#0a0f1e;margin-top:20px;margin-bottom:10px;font-size:0.93rem;display:flex;align-items:center;gap:8px;border-left:3px solid #d4922a;padding:7px 11px;background:rgba(212,146,42,0.07);border-radius:0 8px 8px 0;">$1</div>');
 
   // ── 2. TIPO ALLOGGIO (🛏 / 🏨 / 🏠) ──────────────────────────────────
   text = text.replace(/^(🛏[^\n]+|🏠[^\n]+)$/gm,
-    '<div style="font-size:0.73rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(212,146,42,0.7);margin-top:14px;margin-bottom:4px;">$1</div>');
+    '<div style="font-size:0.73rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#6b7385;margin-top:14px;margin-bottom:4px;">$1</div>');
   // 🏨 solo se non è il titolo principale HOTEL CONSIGLIATI
   text = text.replace(/^(🏨(?!\s*HOTEL CONSIGLIATI)[^\n]+)$/gm,
-    '<div style="font-size:0.73rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(212,146,42,0.7);margin-top:14px;margin-bottom:4px;">$1</div>');
+    '<div style="font-size:0.73rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#6b7385;margin-top:14px;margin-bottom:4px;">$1</div>');
 
   // ── 3. ETICHETTE ANDATA / RITORNO ─────────────────────────────────────
   text = text.replace(/^(ANDATA|RITORNO):$/gm, function(m, dir) {
@@ -1565,10 +1563,10 @@ function formatRisposta(text) {
     function(m, data, airline, orig, dest, t1, t2, dur) {
       const o = abbrevAirport(orig);
       const d = abbrevAirport(dest);
-      return `<div style="display:flex;align-items:center;gap:8px;padding:9px 12px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:9px;margin:3px 0;flex-wrap:wrap;">
-        <span style="font-weight:700;color:#e8edf5;flex:1;min-width:160px;font-size:0.86rem;">${o} <span style="color:#d4922a;">→</span> ${d}</span>
-        <span style="color:rgba(255,255,255,0.55);font-size:0.8rem;white-space:nowrap;">${t1} – ${t2}</span>
-        <span style="background:rgba(212,146,42,0.2);border-radius:4px;padding:2px 8px;font-size:0.76rem;color:#f0b84a;font-weight:600;white-space:nowrap;">${dur}</span>
+      return `<div style="display:flex;align-items:center;gap:8px;padding:9px 12px;background:#f8f9fb;border:1px solid #e8eaf0;border-radius:9px;margin:3px 0;flex-wrap:wrap;">
+        <span style="font-weight:700;color:#0a0f1e;flex:1;min-width:160px;font-size:0.86rem;">${o} <span style="color:#d4922a;">→</span> ${d}</span>
+        <span style="color:#6b7385;font-size:0.8rem;white-space:nowrap;">${t1} – ${t2}</span>
+        <span style="background:#e8eaf0;border-radius:4px;padding:2px 8px;font-size:0.76rem;color:#374151;font-weight:600;white-space:nowrap;">${dur}</span>
         <span style="font-size:0.72rem;color:#9ca3af;white-space:nowrap;">${airline.trim()} · ${data}</span>
       </div>`;
     });
@@ -1579,7 +1577,7 @@ function formatRisposta(text) {
   text = text.replace(/^(\d+(?:[.,]\d+)?)\s+EUR\s+A\/R$/gm,
     '<div style="font-size:1.05rem;font-weight:700;color:#d4922a;margin-bottom:4px;">€$1 A/R</div>');
   text = text.replace(/^(Per questa rotta[^\n]+\.)$/gm,
-    '<div style="font-size:0.76rem;color:rgba(255,255,255,0.45);font-style:italic;margin-bottom:8px;">ℹ️ $1</div>');
+    '<div style="font-size:0.76rem;color:#6b7385;font-style:italic;margin-bottom:8px;">ℹ️ $1</div>');
 
   // ── 6. CARD HOTEL ─────────────────────────────────────────────────────
   // Riga nome: "Nome Hotel" oppure "Nome Hotel | 3 ★ | Rating: 8.6/5"
@@ -1599,25 +1597,25 @@ function formatRisposta(text) {
       const ratingHtml = rating
         ? `<span style="background:${rBg};color:${rColor};border-radius:4px;padding:2px 7px;font-size:0.75rem;font-weight:700;flex-shrink:0;">★ ${rating}</span>`
         : '';
-      return `<div style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:11px 14px;margin:5px 0;">
+      return `<div style="background:#f8f9fb;border:1px solid #e8eaf0;border-radius:10px;padding:11px 14px;margin:5px 0;">
         <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:5px;">
-          <span style="font-weight:700;font-size:0.87rem;color:#e8edf5;line-height:1.3;">${nome}${starsHtml}</span>
+          <span style="font-weight:700;font-size:0.87rem;color:#0a0f1e;line-height:1.3;">${nome}${starsHtml}</span>
           ${ratingHtml}
         </div>
         <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
           <span style="font-weight:700;color:#d4922a;font-size:0.9rem;">€${prezzo}/notte</span>
-          ${totale && notti ? `<span style="font-size:0.77rem;color:rgba(255,255,255,0.5);">Totale ${notti} notti: <strong style="color:#374151;">€${totale}</strong></span>` : ''}
+          ${totale && notti ? `<span style="font-size:0.77rem;color:#6b7385;">Totale ${notti} notti: <strong style="color:#374151;">€${totale}</strong></span>` : ''}
         </div>
       </div>`;
     });
 
   // ── 7. INTESTAZIONI GIORNO ────────────────────────────────────────────
   text = text.replace(/^(GIORNO\s+\d+\s*\([^)]+\)\s*[-–—]\s*.+)$/gm,
-    '<div style="font-weight:700;color:#e0e8f5;font-size:0.89rem;margin-top:16px;margin-bottom:6px;padding:6px 11px;background:rgba(148,163,184,0.15);border-radius:7px;border-left:3px solid #94a3b8;">📅 $1</div>');
+    '<div style="font-weight:700;color:#0a0f1e;font-size:0.89rem;margin-top:16px;margin-bottom:6px;padding:6px 11px;background:#f1f5f9;border-radius:7px;border-left:3px solid #94a3b8;">📅 $1</div>');
 
   // ── 8. LABEL Mattina / Pomeriggio / Sera ─────────────────────────────
   text = text.replace(/^(Mattina|Pomeriggio|Sera):\s*(.*)$/gm,
-    '<div style="margin:6px 0 4px;"><span style="font-weight:700;color:#d4922a;font-size:0.77rem;text-transform:uppercase;letter-spacing:0.06em;">$1</span><span style="color:#c8d4e8;font-size:0.86rem;"> $2</span></div>');
+    '<div style="margin:6px 0 4px;"><span style="font-weight:700;color:#d4922a;font-size:0.77rem;text-transform:uppercase;letter-spacing:0.06em;">$1</span><span style="color:#374151;font-size:0.86rem;"> $2</span></div>');
 
   // ── 9. RETROCOMPATIBILITÀ HTML ────────────────────────────────────────
   if (hasHTML) {
@@ -1631,7 +1629,7 @@ function formatRisposta(text) {
   }
 
   // ── 10. LISTE MARKDOWN ───────────────────────────────────────────────
-  text = text.replace(/^\* (.+)$/gm, '<li style="margin:3px 0;font-size:0.86rem;color:#c8d4e8;">$1</li>');
+  text = text.replace(/^\* (.+)$/gm, '<li style="margin:3px 0;font-size:0.86rem;color:#374151;">$1</li>');
   text = text.replace(/(<li[^>]*>.*?<\/li>\n?)+/gs, m => '<ul style="margin:6px 0 6px 18px;padding:0;">' + m + '</ul>');
 
   // ── 11. A CAPO ───────────────────────────────────────────────────────
@@ -1640,8 +1638,10 @@ function formatRisposta(text) {
 
   // ── 12. PULIZIA ──────────────────────────────────────────────────────
   text = text.replace(/Scrivi\s*(?:<b>)?SI VOGLIO SERVIZIO(?:<\/b>)?[^\n<]*/gi, '');
+  // Rimuovi "[continua]" e varianti
+  text = text.replace(/\[continua\]|\[CONTINUA\]|\[\.{3}\]|\[continua\.\.\.\]/gi, '');
 
-  return `<div style="font-size:0.87rem;color:#d0d9ec;line-height:1.75;">${text}</div>`;
+  return `<div style="font-size:0.87rem;color:#374151;line-height:1.75;">${text}</div>`;
 }
 
 

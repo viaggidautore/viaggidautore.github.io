@@ -903,99 +903,6 @@ footer {
   nav { padding: 12px 16px; }
   .hero { padding: 48px 20px 40px; }
 }
-
-/* ── SUGGEST BUTTONS ── */
-#suggestWrap {
-  padding: 0 14px 14px;
-  background: #f8f9fb;
-}
-#suggestWrap > div {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-.suggest-btn {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  width: 100%;
-  background: var(--white);
-  border: 1.5px solid rgba(212,146,42,0.18);
-  border-radius: 12px;
-  padding: 11px 14px;
-  cursor: pointer;
-  font-family: inherit;
-  text-align: left;
-  transition: all 0.22s cubic-bezier(0.4,0,0.2,1);
-  position: relative;
-  overflow: hidden;
-}
-.suggest-btn::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, rgba(212,146,42,0.07) 0%, rgba(240,184,74,0.04) 100%);
-  opacity: 0;
-  transition: opacity 0.22s;
-}
-.suggest-btn:hover {
-  border-color: rgba(212,146,42,0.45);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(212,146,42,0.14), 0 2px 8px rgba(10,15,30,0.06);
-}
-.suggest-btn:hover::before { opacity: 1; }
-.suggest-btn:active { transform: translateY(0); box-shadow: none; }
-
-.btn-emoji {
-  font-size: 1.25rem;
-  width: 36px;
-  height: 36px;
-  background: linear-gradient(135deg, var(--ink) 0%, var(--ink-soft) 100%);
-  border-radius: 9px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  position: relative;
-  z-index: 1;
-}
-.btn-text {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-  position: relative;
-  z-index: 1;
-  flex: 1;
-}
-.btn-title {
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: var(--ink);
-  letter-spacing: 0.01em;
-  line-height: 1.3;
-}
-.btn-sub {
-  font-size: 0.74rem;
-  color: var(--text-muted);
-  font-weight: 400;
-  line-height: 1.3;
-}
-.suggest-btn-arrow {
-  margin-left: auto;
-  color: rgba(212,146,42,0.5);
-  font-size: 0.85rem;
-  position: relative;
-  z-index: 1;
-  transition: transform 0.22s, color 0.22s;
-}
-.suggest-btn:hover .suggest-btn-arrow {
-  transform: translateX(3px);
-  color: var(--amber);
-}
-@media (max-width: 400px) {
-  .btn-title { font-size: 0.78rem; }
-  .btn-sub { font-size: 0.7rem; }
-}
 </style>
 </head>
 <body>
@@ -1070,29 +977,20 @@ footer {
 
       <div id="suggestWrap" style="display:block;">
         <div>
-          <button class="suggest-btn" onclick="usaSuggerimento('destinazione')">
-            <span class="btn-emoji">✈️</span>
-            <span class="btn-text">
-              <span class="btn-title">Ho una destinazione in mente</span>
-              <span class="btn-sub">Dimmi dove vuoi andare e le date</span>
-            </span>
-            <span class="suggest-btn-arrow">›</span>
-          </button>
-          <button class="suggest-btn" onclick="usaSuggerimento('ispira')">
+
+          <button class="suggest-btn" onclick="usaSuggerimento('Ispirami! Quali sono le destinazioni più economiche partendo da Bologna nel prossimo mese? Budget massimo 80 euro andata e ritorno.')">
             <span class="btn-emoji">💡</span>
             <span class="btn-text">
               <span class="btn-title">Ispirami — non so dove andare</span>
-              <span class="btn-sub">Trova le mete più economiche per me</span>
+              <span class="btn-sub">Scopri le mete più economiche da Bologna</span>
             </span>
-            <span class="suggest-btn-arrow">›</span>
           </button>
-          <button class="suggest-btn" onclick="usaSuggerimento('offerte')">
+          <button class="suggest-btn" onclick="usaSuggerimento('Quali sono le offerte voli low cost da Bologna per il prossimo mese? Cerco destinazioni economiche sotto i 100 euro.')">
             <span class="btn-emoji">💰</span>
             <span class="btn-text">
               <span class="btn-title">Cerca offerte del momento</span>
-              <span class="btn-sub">Voli low cost in partenza da Bologna</span>
+              <span class="btn-sub">Voli low cost da Bologna sotto i 100€</span>
             </span>
-            <span class="suggest-btn-arrow">›</span>
           </button>
         </div>
       </div>
@@ -1366,38 +1264,8 @@ function addTyping() {
 }
 
 
-function usaSuggerimento(tipo) {
-  var oggi = new Date();
-
-  // Prossimo venerdì
-  var giorni_a_venerdi = (5 - oggi.getDay() + 7) % 7;
-  if (giorni_a_venerdi === 0) giorni_a_venerdi = 7;
-  var venerdi = new Date(oggi);
-  venerdi.setDate(oggi.getDate() + giorni_a_venerdi);
-
-  // Domenica successiva
-  var domenica = new Date(venerdi);
-  domenica.setDate(venerdi.getDate() + 2);
-
-  // Tra 3 settimane (ideale per pianificare)
-  var tra3sett = new Date(oggi);
-  tra3sett.setDate(oggi.getDate() + 21);
-  var tra3settFine = new Date(tra3sett);
-  tra3settFine.setDate(tra3sett.getDate() + 4);
-
-  var mesi = ['gennaio','febbraio','marzo','aprile','maggio','giugno','luglio','agosto','settembre','ottobre','novembre','dicembre'];
-
-  function fmt(d) {
-    return d.getDate() + ' ' + mesi[d.getMonth()];
-  }
-
-  var testi = {
-    destinazione: 'Voglio andare a Barcellona dal ' + fmt(tra3sett) + ' al ' + fmt(tra3settFine) + ', siamo in 2 adulti. Cerco volo + hotel economico.',
-    ispira: 'Non so dove andare. Parto da Bologna il ' + fmt(venerdi) + ' e torno il ' + fmt(domenica) + ', siamo in 2. Budget massimo 250 euro a persona tutto incluso. Suggeriscimi le destinazioni più economiche raggiungibili in questo weekend.',
-    offerte: 'Cerca i voli più economici in partenza da Bologna per il weekend del ' + fmt(venerdi) + '-' + fmt(domenica) + '. Qualsiasi destinazione europea va bene, voglio spendere il meno possibile.'
-  };
-
-  var testo = testi[tipo] || tipo;
+function usaSuggerimento(testo) {
+  document.getElementById('suggestWrap').style.display = 'none';
   document.getElementById('chatInput').value = testo;
   document.getElementById('chatInput').focus();
   inviaMsg();

@@ -1398,7 +1398,6 @@ function usaSuggerimento(tipo) {
   };
 
   var testo = testi[tipo] || tipo;
-  document.getElementById('suggestWrap').style.display = 'none';
   document.getElementById('chatInput').value = testo;
   document.getElementById('chatInput').focus();
   inviaMsg();

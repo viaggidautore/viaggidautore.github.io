@@ -1070,7 +1070,7 @@ footer {
 
       <div id="suggestWrap" style="display:block;">
         <div>
-          <button class="suggest-btn" onclick="usaSuggerimento('Ho una destinazione in mente')">
+          <button class="suggest-btn" onclick="usaSuggerimento('destinazione')">
             <span class="btn-emoji">✈️</span>
             <span class="btn-text">
               <span class="btn-title">Ho una destinazione in mente</span>
@@ -1078,7 +1078,7 @@ footer {
             </span>
             <span class="suggest-btn-arrow">›</span>
           </button>
-          <button class="suggest-btn" onclick="usaSuggerimento('Dove posso andare con 50 euro da Bologna?')">
+          <button class="suggest-btn" onclick="usaSuggerimento('ispira')">
             <span class="btn-emoji">💡</span>
             <span class="btn-text">
               <span class="btn-title">Ispirami — non so dove andare</span>
@@ -1086,7 +1086,7 @@ footer {
             </span>
             <span class="suggest-btn-arrow">›</span>
           </button>
-          <button class="suggest-btn" onclick="usaSuggerimento('Offerte voli economici questo weekend da Bologna')">
+          <button class="suggest-btn" onclick="usaSuggerimento('offerte')">
             <span class="btn-emoji">💰</span>
             <span class="btn-text">
               <span class="btn-title">Cerca offerte del momento</span>
@@ -1366,7 +1366,38 @@ function addTyping() {
 }
 
 
-function usaSuggerimento(testo) {
+function usaSuggerimento(tipo) {
+  var oggi = new Date();
+
+  // Prossimo venerdì
+  var giorni_a_venerdi = (5 - oggi.getDay() + 7) % 7;
+  if (giorni_a_venerdi === 0) giorni_a_venerdi = 7;
+  var venerdi = new Date(oggi);
+  venerdi.setDate(oggi.getDate() + giorni_a_venerdi);
+
+  // Domenica successiva
+  var domenica = new Date(venerdi);
+  domenica.setDate(venerdi.getDate() + 2);
+
+  // Tra 3 settimane (ideale per pianificare)
+  var tra3sett = new Date(oggi);
+  tra3sett.setDate(oggi.getDate() + 21);
+  var tra3settFine = new Date(tra3sett);
+  tra3settFine.setDate(tra3sett.getDate() + 4);
+
+  var mesi = ['gennaio','febbraio','marzo','aprile','maggio','giugno','luglio','agosto','settembre','ottobre','novembre','dicembre'];
+
+  function fmt(d) {
+    return d.getDate() + ' ' + mesi[d.getMonth()];
+  }
+
+  var testi = {
+    destinazione: 'Voglio andare a Barcellona dal ' + fmt(tra3sett) + ' al ' + fmt(tra3settFine) + ', siamo in 2 adulti. Cerco volo + hotel economico.',
+    ispira: 'Non so dove andare. Parto da Bologna il ' + fmt(venerdi) + ' e torno il ' + fmt(domenica) + ', siamo in 2. Budget massimo 250 euro a persona tutto incluso. Suggeriscimi le destinazioni più economiche raggiungibili in questo weekend.',
+    offerte: 'Cerca i voli più economici in partenza da Bologna per il weekend del ' + fmt(venerdi) + '-' + fmt(domenica) + '. Qualsiasi destinazione europea va bene, voglio spendere il meno possibile.'
+  };
+
+  var testo = testi[tipo] || tipo;
   document.getElementById('suggestWrap').style.display = 'none';
   document.getElementById('chatInput').value = testo;
   document.getElementById('chatInput').focus();

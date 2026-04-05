@@ -1063,10 +1063,10 @@ footer {
 
       <div id="suggestWrap">
         <button class="suggest-btn" onclick="usaSuggerimento('offerte')">
-          <span class="btn-icon">💡</span>
+          <span class="btn-icon">🔥</span>
           <span class="btn-text">
-            <span class="btn-title">Ispirami — non so dove andare</span>
-            <span class="btn-sub">Scopri le mete più economiche da Bologna</span>
+            <span class="btn-title">Offerta della settimana</span>
+            <span class="btn-sub">Il volo più economico da Bologna adesso</span>
           </span>
           <span class="btn-arrow">›</span>
         </button>
@@ -1353,7 +1353,7 @@ function usaSuggerimento(tipo) {
   function fmt(d) { return d.getDate() + ' ' + mesi[d.getMonth()]; }
 
   var testi = {
-    offerte: 'Ispirami! Non so dove andare. Parto da Bologna il ' + fmt(venerdi) + ' e torno il ' + fmt(domenica) + ', siamo in 2 persone. Budget massimo 200 euro a persona tutto incluso. Quali sono le destinazioni europee più economiche raggiungibili questo weekend?'
+    offerte: 'Offerta della settimana: cerca il volo più economico A/R da Bologna per il prossimo weekend ' + fmt(venerdi) + '-' + fmt(domenica) + '. Voglio sapere città, compagnia aerea, orari e prezzo reale.'
   };
 
   var testo = testi[tipo] || tipo;

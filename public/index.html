@@ -1447,10 +1447,73 @@ function formatRisposta(text) {
   return `<div style="font-size:0.87rem;color:#374151;line-height:1.7;">${text}</div>`;
 }
 
+// ── RILEVAMENTO LINGUA (solo IT, EN, ES) ──
+var _linguaChat = 'it';
+
+function rileveLingua(testo) {
+  var t = testo.toLowerCase();
+
+  // Mesi italiani → IT
+  var mesiIT = ['gennaio','febbraio','marzo','aprile','maggio','giugno','luglio','agosto','settembre','ottobre','novembre','dicembre'];
+  if (mesiIT.some(function(m){ return t.includes(m); })) return 'it';
+
+  // Pattern ES
+  var patES = [/\bdel\s+\d+\s+al\s+\d/, /\bquiero\b/, /\bnoches\b/, /\babril\b/, /\bmayo\b/, /\bjunio\b/, /\bjulio\b/, /\bagosto\b/, /\bhola\b/, /\bvuelo\b/, /\bviaje\b/, /\bbusco\b/, /\bdesde\b/, /\bhasta\b/];
+  if (patES.some(function(p){ return p.test(t); })) return 'es';
+
+  // Pattern EN
+  var patEN = [/\bfrom\s+\w+\s+\d/, /\bto\s+\w+\s+\d/, /\bnights\b/, /\bflight\b/, /\bjanuary\b/, /\bfebruary\b/, /\bmarch\b/, /\bjune\b/, /\bjuly\b/, /\baugust\b/, /\bwant\b/, /\btrip\b/, /\bhello\b/, /\bhi\b/, /\bbook\b/];
+  if (patEN.some(function(p){ return p.test(t); })) return 'en';
+
+  // Keyword score
+  var kwEN = ['want','travel','hotel','hello','hi','book','trip','budget','cheap','flight','nights','where','when'];
+  var kwES = ['quiero','viaje','vuelo','hola','reservar','familia','pareja','amigos','noches','desde','hasta'];
+  var scoreEN = kwEN.filter(function(w){ return t.includes(w); }).length;
+  var scoreES = kwES.filter(function(w){ return t.includes(w); }).length;
+
+  if (scoreEN > 1 && scoreEN >= scoreES) return 'en';
+  if (scoreES > 1 && scoreES > scoreEN) return 'es';
+  return 'it';
+}
+
+var TESTI = {
+  it: {
+    continuaWA: 'Per continuare la pianificazione del tuo viaggio, scrivimi su WhatsApp! 👇',
+    errore: 'Mi dispiace, si è verificato un errore. Riprova tra poco.',
+    connessione: 'Connessione non riuscita. Riprova tra poco.',
+    pdf: '📄 Scarica il tuo preventivo PDF',
+    parole: ['volo','hotel','preventivo','totale','itinerario']
+  },
+  en: {
+    continuaWA: 'To continue planning your trip, contact me on WhatsApp! 👇',
+    errore: 'Sorry, an error occurred. Please try again in a moment.',
+    connessione: 'Connection failed. Please try again in a moment.',
+    pdf: '📄 Download your quote PDF',
+    parole: ['flight','hotel','quote','total','itinerary','volo','preventivo']
+  },
+  es: {
+    continuaWA: 'Para continuar planificando tu viaje, escríbeme por WhatsApp! 👇',
+    errore: 'Lo siento, se produjo un error. Inténtalo de nuevo en un momento.',
+    connessione: 'Conexión fallida. Inténtalo de nuevo en un momento.',
+    pdf: '📄 Descargar tu presupuesto PDF',
+    parole: ['vuelo','hotel','presupuesto','total','itinerario','volo','preventivo']
+  }
+};
+
+function t(chiave) {
+  var lang = TESTI[_linguaChat] ? _linguaChat : 'it';
+  return TESTI[lang][chiave] || TESTI['it'][chiave];
+}
+
 async function inviaMsg() {
   const input = document.getElementById('chatInput');
   const testo = input.value.trim();
   if (!testo) return;
+
+  // Rileva lingua al primo messaggio
+  var linguaRilevata = rileveLingua(testo);
+  if (linguaRilevata !== 'it') _linguaChat = linguaRilevata;
+  else if (_linguaChat === 'it') _linguaChat = 'it';
 
   addMsg(testo, true);
   input.value = '';
@@ -1459,7 +1522,7 @@ async function inviaMsg() {
 
   if (simUsata()) {
     setTimeout(() => {
-      addMsg('Per continuare la pianificazione del tuo viaggio, scrivimi su WhatsApp! 👇', false);
+      addMsg(t('continuaWA'), false);
       input.disabled = false;
       document.getElementById('chatSend').disabled = false;
     }, 800);
@@ -1488,16 +1551,18 @@ async function inviaMsg() {
       addMsg(formatRisposta(data.risposta), false);
       // Mostra pulsante PDF quando arriva un preventivo completo
       const r = data.risposta.toLowerCase();
-      if (r.includes('volo') || r.includes('hotel') || r.includes('preventivo') || r.includes('totale') || r.includes('itinerario')) {
+      var parole = t('parole');
+      if (parole.some(function(p){ return r.includes(p); })) {
+        document.getElementById('quickReplyWrap').querySelector('.quick-reply-btn').textContent = t('pdf');
         showQuickReply();
       }
       segnaSimUsata();
     } else {
-      addMsg('Mi dispiace, si è verificato un errore. Riprova tra poco.', false);
+      addMsg(t('errore'), false);
     }
   } catch(e) {
     typing.remove();
-    addMsg('Connessione non riuscita. Riprova tra poco.', false);
+    addMsg(t('connessione'), false);
   }
 
   input.disabled = false;

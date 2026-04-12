@@ -342,14 +342,21 @@ nav {
 }
 .msg-row.msg-user .msg-avatar { display: none; }
 .msg-bubble {
-  max-width: 280px;
+  max-width: 85%;
   padding: 12px 14px;
   border-radius: 10px;
   font-size: 0.85rem;
-  line-height: 1.5;
+  line-height: 1.6;
   color: var(--text);
   background: #f0f1f3;
   word-break: break-word;
+  flex: 0 1 auto;
+}
+@media (max-width: 600px) {
+  .msg-bubble {
+    max-width: 90%;
+    font-size: 0.8rem;
+  }
 }
 .msg-row.msg-user .msg-bubble {
   background: var(--ink);
@@ -1529,6 +1536,7 @@ async function inviaMsg() {
                     currentLang === 'es' ? 'Conexión fallida. Por favor, intenta de nuevo más tarde.' :
                     'Connessione non riuscita. Riprova tra poco.';
     addMsg(connMsg, false);
+    console.error('Chat error:', e);
   }
 
   input.disabled = false;

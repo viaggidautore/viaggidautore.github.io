@@ -1529,6 +1529,8 @@ document.getElementById('chatInput').addEventListener('keydown', e => {
   if (e.key === 'Enter') inviaMsg();
 });
 
+document.getElementById('chatSend').addEventListener('click', inviaMsg);
+
 document.getElementById('chatInput').classList.add('pulse-once');
 </script>
 

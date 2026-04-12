@@ -1514,34 +1514,15 @@ async function inviaMsg() {
       body: JSON.stringify({ messaggio: testo })
     });
     clearTimeout(tid);
-    
-    // Controlla status HTTP
-    if (!res.ok) {
-      throw new Error(`HTTP ${res.status}: ${res.statusText}`);
-    }
-    
-    // Leggi il body UNA SOLA VOLTA
-    const bodyText = await res.text();
-    let data;
-    
-    try {
-      // Prova a parsare come JSON
-      data = JSON.parse(bodyText);
-    } catch(parseErr) {
-      // Se non è JSON valido, usa il testo grezzo
-      console.warn('Invalid JSON response, using raw text:', bodyText);
-      data = { risposta: bodyText || 'Risposta ricevuta' };
-    }
-    
+    const data = await res.json();
     typing.remove();
     if (data.risposta) {
       addMsg(formatRisposta(data.risposta), false);
       const r = data.risposta.toLowerCase();
-      const hasQuote = r.includes('volo') || r.includes('hotel') || r.includes('preventivo') || r.includes('totale') || r.includes('itinerario');
-      if (hasQuote) {
+      if (r.includes('volo') || r.includes('hotel') || r.includes('preventivo') || r.includes('totale') || r.includes('itinerario')) {
         showQuickReply();
-        segnaSimUsata();
       }
+      segnaSimUsata();
     } else {
       const errMsg = currentLang === 'en' ? 'Sorry, an error occurred. Please try again shortly.' :
                      currentLang === 'es' ? 'Lo sentimos, se produjo un error. Por favor, intenta de nuevo más tarde.' :

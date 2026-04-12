@@ -1512,10 +1512,11 @@ async function inviaMsg() {
     if (data.risposta) {
       addMsg(formatRisposta(data.risposta), false);
       const r = data.risposta.toLowerCase();
-      if (r.includes('volo') || r.includes('hotel') || r.includes('preventivo') || r.includes('totale') || r.includes('itinerario')) {
+      const hasQuote = r.includes('volo') || r.includes('hotel') || r.includes('preventivo') || r.includes('totale') || r.includes('itinerario');
+      if (hasQuote) {
         showQuickReply();
+        segnaSimUsata();
       }
-      segnaSimUsata();
     } else {
       const errMsg = currentLang === 'en' ? 'Sorry, an error occurred. Please try again shortly.' :
                      currentLang === 'es' ? 'Lo sentimos, se produjo un error. Por favor, intenta de nuevo más tarde.' :
@@ -1540,6 +1541,14 @@ document.getElementById('chatInput').addEventListener('keydown', e => {
 });
 
 document.getElementById('chatSend').addEventListener('click', inviaMsg);
+
+// DEBUG: Reset sim usata (apri console e digita: resetChat())
+window.resetChat = function() {
+  localStorage.removeItem('vda_sim_usata');
+  document.getElementById('chatInput').disabled = false;
+  document.getElementById('chatSend').disabled = false;
+  console.log('✅ Chat resettata');
+};
 
 document.getElementById('chatInput').classList.add('pulse-once');
 </script>

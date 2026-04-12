@@ -1289,6 +1289,16 @@ const translations = {
   }
 };
 
+// Placeholder multilingue
+const chatPlaceholders = {
+  it: 'Es. Barcellona, dal 10 al 17 maggio, siamo in 2...',
+  en: 'e.g., Barcelona, from May 10th to 17th, we are 2...',
+  es: 'p. ej., Barcelona, del 10 al 17 de mayo, somos 2...',
+  fr: 'ex. Barcelone, du 10 au 17 mai, nous sommes 2...',
+  de: 'z. B. Barcelona, vom 10. bis 17. Mai, wir sind 2...',
+  pt: 'ex. Barcelona, de 10 a 17 de maio, somos 2...'
+};
+
 // ── SISTEMA DI TRADUZIONI ──
 let currentLang = localStorage.getItem('vda-lang') || 'it';
 
@@ -1308,10 +1318,10 @@ function setLanguage(lang) {
   });
   
   // Aggiorna placeholder chat
-  document.getElementById('chatInput').placeholder = 
-    lang === 'en' ? 'e.g., Barcelona, from May 10th to 17th, we are 2...' :
-    lang === 'es' ? 'p. ej., Barcelona, del 10 al 17 de mayo, somos 2...' :
-    'Es. Barcellona, dal 10 al 17 maggio, siamo in 2...';
+  const chatInput = document.getElementById('chatInput');
+  if (chatInput) {
+    chatInput.placeholder = chatPlaceholders[lang] || chatPlaceholders.it;
+  }
   
   // Aggiorna bottoni lingua
   document.querySelectorAll('.lang-btn').forEach(btn => {

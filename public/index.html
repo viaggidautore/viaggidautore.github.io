@@ -72,6 +72,7 @@ nav {
   top: 0;
   z-index: 200;
   border-bottom: 1px solid var(--border);
+  flex-wrap: nowrap;
 }
 .nav-brand {
   font-family: 'Cormorant Garamond', serif;
@@ -79,6 +80,7 @@ nav {
   font-weight: 600;
   color: var(--white);
   letter-spacing: 0.02em;
+  flex-shrink: 0;
 }
 .nav-brand span { color: var(--amber-light); font-style: italic; }
 
@@ -86,8 +88,8 @@ nav {
   display: flex;
   align-items: center;
   gap: 16px;
-  margin-left: auto;
-  margin-right: 16px;
+  margin: 0 auto;
+  flex-shrink: 0;
 }
 
 .lang-switcher {
@@ -804,9 +806,42 @@ footer a:hover { color: var(--white); }
   .include-grid { grid-template-columns: 1fr; }
   .info-row { gap: 28px; }
   .review-card { min-width: 100%; }
-  nav { padding: 12px 16px; }
+  nav { 
+    padding: 10px 12px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .nav-brand {
+    font-size: 1.1rem;
+    order: 1;
+    flex: 1;
+  }
+  .nav-center {
+    display: flex;
+    order: 2;
+  }
+  .lang-switcher {
+    padding: 4px 6px;
+    gap: 2px;
+  }
+  .lang-btn {
+    font-size: 0.65rem;
+    padding: 3px 5px;
+  }
+  .nav-risorse {
+    order: 3;
+    font-size: 0.7rem;
+    padding: 6px 10px;
+    white-space: normal;
+  }
+  .nav-risorse span.nav-risorse-label { display: none; }
+  .nav-wa {
+    order: 4;
+    font-size: 0.7rem;
+    padding: 6px 12px;
+  }
+  .nav-wa svg { width: 14px; height: 14px; }
   .hero { padding: 48px 20px 40px; }
-  .nav-center { display: none; }
 }
 </style>
 </head>

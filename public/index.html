@@ -1514,7 +1514,23 @@ async function inviaMsg() {
       body: JSON.stringify({ messaggio: testo })
     });
     clearTimeout(tid);
-    const data = await res.json();
+    
+    // Controlla status HTTP
+    if (!res.ok) {
+      throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+    }
+    
+    // Prova a parsare JSON
+    let data;
+    try {
+      data = await res.json();
+    } catch(parseErr) {
+      // Se JSON non è valido, usa il testo grezzo
+      const rawText = await res.text();
+      console.warn('Invalid JSON response, using raw text:', rawText);
+      data = { risposta: rawText || 'Risposta ricevuta' };
+    }
+    
     typing.remove();
     if (data.risposta) {
       addMsg(formatRisposta(data.risposta), false);
@@ -1536,7 +1552,7 @@ async function inviaMsg() {
                     currentLang === 'es' ? 'Conexión fallida. Por favor, intenta de nuevo más tarde.' :
                     'Connessione non riuscita. Riprova tra poco.';
     addMsg(connMsg, false);
-    console.error('Chat error:', e);
+    console.error('Chat error:', e.message);
   }
 
   input.disabled = false;

@@ -1520,15 +1520,17 @@ async function inviaMsg() {
       throw new Error(`HTTP ${res.status}: ${res.statusText}`);
     }
     
-    // Prova a parsare JSON
+    // Leggi il body UNA SOLA VOLTA
+    const bodyText = await res.text();
     let data;
+    
     try {
-      data = await res.json();
+      // Prova a parsare come JSON
+      data = JSON.parse(bodyText);
     } catch(parseErr) {
-      // Se JSON non è valido, usa il testo grezzo
-      const rawText = await res.text();
-      console.warn('Invalid JSON response, using raw text:', rawText);
-      data = { risposta: rawText || 'Risposta ricevuta' };
+      // Se non è JSON valido, usa il testo grezzo
+      console.warn('Invalid JSON response, using raw text:', bodyText);
+      data = { risposta: bodyText || 'Risposta ricevuta' };
     }
     
     typing.remove();

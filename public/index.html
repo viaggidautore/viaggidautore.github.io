@@ -1355,13 +1355,11 @@ window.addEventListener('load', () => {
 const WEBHOOK = 'https://garnett-cleistogamic-unslowly.ngrok-free.dev/webhook/868a702c-ae44-4bbf-bcae-16d953de282e';
 
 function simUsata() {
-  return localStorage.getItem('vda_sim_usata') === 'true';
+  return false; // Sempre false - chat sempre attiva
 }
 
 function segnaSimUsata() {
-  localStorage.setItem('vda_sim_usata', 'true');
-  document.getElementById('chatInput').disabled = true;
-  document.getElementById('chatSend').disabled = true;
+  // Disattivato - non bloccare più la chat
 }
 
 function addMsg(testo, isUser = false) {

@@ -1486,18 +1486,6 @@ async function inviaMsg() {
   input.disabled = true;
   document.getElementById('chatSend').disabled = true;
 
-  if (simUsata()) {
-    setTimeout(() => {
-      const msg = currentLang === 'en' ? 'To continue planning your trip, message me on WhatsApp! 👇' :
-                  currentLang === 'es' ? '¡Para continuar planificando tu viaje, escríbeme por WhatsApp! 👇' :
-                  'Per continuare la pianificazione del tuo viaggio, scrivimi su WhatsApp! 👇';
-      addMsg(msg, false);
-      input.disabled = false;
-      document.getElementById('chatSend').disabled = false;
-    }, 800);
-    return;
-  }
-
   const typing = addTyping();
 
   try {
